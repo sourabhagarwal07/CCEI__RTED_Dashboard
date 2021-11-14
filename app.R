@@ -35,7 +35,7 @@ dashboard_ui_slider_date_start <- paste(Sys.Date()-7,"00:00:00",sep=" ")
 
 # Define UI for application that draws a histogram
 ui <- dashboardPage(
-  dashboardHeader(title = "CCEI-RTED DashBoard",column(width = 1, h5("hello world"))),
+  dashboardHeader(title = "CCEI-RTED DashBoard",dropdownMenu()),
   dashboardSidebar(
     sidebarMenu( id = "rted_menu",
                  menuItem("Dashboard", tabName = "dashboard", icon = icon("chart-line")),
