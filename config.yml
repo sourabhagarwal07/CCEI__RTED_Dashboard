@@ -1,0 +1,8 @@
+default:
+  username: "sourabh.agarwal@cloud.statcan.ca"
+  server: "ccei.database.windows.net"
+  database: "ccei"
+  auth: "ActiveDirectoryInteractive"
+  driver: "ODBC Driver 17 for SQL Server"
+production:
+  username: "xxxxxx"
