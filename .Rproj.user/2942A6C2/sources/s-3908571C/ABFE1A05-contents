@@ -66,6 +66,12 @@ border-bottom-color:#26374A;
 border-left-color:#26374A;
 border-right-color:#26374A;
 border-top-color:#26374A;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+transition: 0.3s;
+}
+
+.box.box-solid.box-success:hover{
+box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
 .box.box-solid.box-warning>.box-header {
@@ -151,6 +157,20 @@ margin-bottom : -15px;
                   column(
                     fluidRow(withLoader(highchartOutput("BC_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_BC","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
+              ),
+              fluidRow(
+                box(
+                  title = "Newfoundland & Labrador",width = 4, status = "success", solidHeader = TRUE,
+                  collapsible = TRUE,
+                  column(
+                    fluidRow(withLoader(highchartOutput("NFL_load"), type = "html", loader = "loader3")),
+                    fluidRow(bsButton("button_NFL","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
+                box(
+                  title = "Quebec",width = 4, status = "success", solidHeader = TRUE,
+                  collapsible = TRUE,
+                  column(
+                    fluidRow(withLoader(highchartOutput("QB_load"), type = "html", loader = "loader3")),
+                    fluidRow(bsButton("button_QB","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
               )),
       
       tabItem(tabName = "pei",
@@ -296,6 +316,122 @@ margin-bottom : -15px;
                                            fluidRow(withLoader(highchartOutput("NS_LOAD_DAILY"),type = "html", loader = "loader3"))),
                          conditionalPanel( condition = "input.select_fr_ns == 5",
                                            fluidRow(withLoader(highchartOutput("NS_LOAD_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "NS Export & Import - I", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ns_1", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ns_1 != 1",sliderInput("ns_dates_2",
+                                                                                                                                     "Dates",
+                                                                                                                                     min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                     max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                     value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                     timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ns_1 == 1",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_1_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_1 == 6",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_1_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_1 == 3",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_1_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_1 == 4",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_1_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_1 == 5",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_1_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "NS Export & Import - II", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ns_2", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ns_2 != 1",sliderInput("ns_dates_3",
+                                                                                                                                     "Dates",
+                                                                                                                                     min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                     max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                     value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                     timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ns_2 == 1",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_2_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_2 == 6",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_2_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_2 == 3",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_2_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_2 == 4",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_2_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_2 == 5",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_2_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "NS Export & Import - III", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ns_3", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ns_3 != 1",sliderInput("ns_dates_4",
+                                                                                                                                     "Dates",
+                                                                                                                                     min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                     max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                     value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                     timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ns_3 == 1",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_3_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_3 == 6",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_3_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_3 == 3",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_3_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_3 == 4",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_3_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_3 == 5",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_3_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "NS Export & Import - IV", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ns_4", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ns_4 != 1",sliderInput("ns_dates_5",
+                                                                                                                                     "Dates",
+                                                                                                                                     min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                     max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                     value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                     timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ns_4 == 1",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_4_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_4 == 6",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_4_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_4 == 3",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_4_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_4 == 4",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_4_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ns_4 == 5",
+                                           fluidRow(withLoader(highchartOutput("NS_EXP_4_HOURLY"),type = "html", loader = "loader3"))),
                          fluidRow(
                            column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
                            column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
@@ -539,6 +675,38 @@ margin-bottom : -15px;
                  )
                )))
       ),
+      tabItem(tabName = "NFL",
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "NFL Load", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_nfl", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_nfl != 1",sliderInput("nfl_dates_1",
+                                                                                                                                      "Dates",
+                                                                                                                                      min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                      max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                      value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                      timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_nfl == 1",
+                                           fluidRow(withLoader(highchartOutput("NFL_LOAD_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_nfl == 6",
+                                           fluidRow(withLoader(highchartOutput("NFL_LOAD_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_nfl == 3",
+                                           fluidRow(withLoader(highchartOutput("NFL_LOAD_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_nfl == 4",
+                                           fluidRow(withLoader(highchartOutput("NFL_LOAD_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_nfl == 5",
+                                           fluidRow(withLoader(highchartOutput("NFL_LOAD_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       )))
+              ),
+      tabItem(tabName = "QB",h2("hello world")),
       tabItem(tabName = "AB",h2("hello world")),
       tabItem(tabName = "BC",h2("hello World 5")),
       tabItem(tabName = "DD",h2("Data Dicitionary")),
@@ -654,91 +822,6 @@ margin-bottom : -15px;
 
 #bussines logic
 
-graph <- function(graph_data,clr,vr,ex_var){
-  if (is.null(ex_var))
-  {
-    out <- highchart() %>% 
-      hc_xAxis(type = "datetime") %>% 
-      hc_add_series(graph_data, type = "line", name = paste(vr,":",sep = " "), color = clr) %>% 
-      hc_navigator(enabled = TRUE)
-  }
-  else
-  {
-    out <- highchart() %>% 
-      hc_xAxis(type = "datetime") %>% 
-      hc_add_series(graph_data, type = "line", name = paste(vr,":",sep = " "), color = clr) %>%
-      ex_var %>%
-      hc_navigator(enabled = TRUE)
-  }
-}
-
-
-zoom_data <- function()
-{
-  zm <- list(
-    list(type = 'all', text = 'All'),
-    list(type = 'year', count = 3, text = '3y'),
-    list(type = 'year', count = 1, text = '1y'),
-    list(type = 'month', count = 6, text = '6m'),
-    list(type = 'month', count = 1, text = '1m'),
-    list(type = 'week', count = 3, text = '3w'),
-    list(type = 'week', count = 1, text = '1w')
-  )
-  return(zm)
-}
-graph_data <- function(sr,nm,ty,cl)
-{
-  dat <- hc_add_series(sr,name = nm, type = ty, color = cl)
-  return(dat)
-}
-graph_1 <- function(gd,tx,btns,y)
-{
-  gp1 <- highchart() %>% hc_boost(enabled = TRUE) %>% hc_navigator(enabled = TRUE) %>% hc_rangeSelector(enabled = TRUE) %>%
-    hc_xAxis(type = "datetime",title = list(text = tx)) %>% gd %>% hc_rangeSelector( 
-      buttons = btns,selected = y)
-  return(gp1)
-}
-graph_2 <- function(gd,gd1,tx)
-{
-  gp2 <- highchart() %>% hc_boost(enabled = TRUE) %>% hc_navigator(enabled = TRUE) %>%
-    hc_xAxis(type = "datetime",title = list(text = tx)) %>% gd %>% gd1
-  return(gp2)
-}
-graph_3 <- function(gd,gd1,tx)
-{
-  gp3 <- highchart() %>% hc_boost(enabled = TRUE) %>% hc_navigator(enabled = TRUE) %>%
-    hc_xAxis(type = "datetime",title = list(text = tx)) %>% gd %>% gd1
-  return(gp3)
-}
-graph_4 <- function(gd,gd1,tx,btns,y)
-{
-  gp4 <- highchart() %>% hc_boost(enabled = TRUE) %>% hc_navigator(enabled = TRUE) %>% hc_rangeSelector(enabled = TRUE) %>%
-    hc_xAxis(type = "datetime",title = list(text = tx)) %>% gd %>% gd1 %>% hc_rangeSelector( 
-      buttons = btns,selected = y)
-  return(gp4)
-}
-
-
-
-notification_generator <- function(table_name,Download_time){
-  item <- notificationItem(
-    text = paste("The File",table_name,"is successfully downloaded. (",Download_time,").",sep = " "),
-    icon = icon("check-circle"),
-    status = "success"
-  )
-  
-  return(item)
-}
-
-tables <<- list("nb_realtime_alldata_new_brunswick_utc",
-                "ns_realtime_load_novascotia_utc",
-                "bc_test_table_1",
-                "ab_hourly_zonal_demand_hist_utc",
-                "Ontario_Load_RTED",
-                "pei_rted",
-                "bc_test_table_2",
-                "bc_test_table_3")
-
 Previous_date <- as.Date(Sys.Date())-(5*365)
 previous_time <- paste(Previous_date,"00:00:00",sep=" ")
 
@@ -747,7 +830,7 @@ previous_time_1 <- paste(Previous_date_1,"00:00:00",sep=" ")
 
 
 
-abload_data <- tbl(con, tables[[4]]) %>% arrange(Date_time_local) %>% collect()
+abload_data <- tbl(con, config$provinces$AB$table15) %>% arrange(Date_time_local) %>% collect()
 abload_date <- as.Date(tail(abload_data$Date_time_local,1))
 abload_subset <- subset(abload_data,subset = Date_time_local >= (abload_date - 1) & Date_time_local <= abload_date)
 ab_load_ts_1 <-  xts(abload_subset$Calgary,abload_subset$Date_time_local)
@@ -767,43 +850,27 @@ ab_load_chart <- highchart() %>%
   hc_add_series(ab_load_ts_6, name="South Load", type = "line",color = "brown")%>%
   hc_navigator(enabled = TRUE)
 
-pei_ind_dat <- tbl(con, tables[[6]]) %>% arrange(Date_time_local) %>% collect()
-nb_ind_dat <- tbl(con, tables[[1]]) %>% arrange(Date_time_local) %>% collect()
-ns_ind_dat <- tbl(con, tables[[2]]) %>% arrange(Date_time_local) %>% collect()
-bc_ind_dat <- tbl(con, tables[[3]]) %>% arrange(Date_time_local) %>% collect()
-ab_ind_dat <- tbl(con, tables[[4]]) %>% arrange(Date_time_local) %>% collect()
-on_ind_dat <- tbl(con, tables[[5]]) %>% arrange(date_time_local) %>% collect()
-bc_ind_dat_1 <- tbl(con, tables[[7]]) %>% collect()
-bc_ind_dat_2 <- tbl(con, tables[[8]]) %>% arrange(date_time_local) %>% collect()
+pei_ind_dat <- tbl(con, config$provinces$PEI$table1) %>% arrange(Date_time_local) %>% collect()
+nb_ind_dat <- tbl(con, config$provinces$NB$table1) %>% arrange(Date_time_local) %>% collect()
+ns_ind_dat <- tbl(con, config$provinces$NS$table1) %>% arrange(Date_time_local) %>% collect()
+bc_ind_dat <- tbl(con, config$provinces$BC$table1) %>% arrange(Date_time_local) %>% collect()
+ab_ind_dat <- tbl(con, config$provinces$AB$table15) %>% arrange(Date_time_local) %>% collect()
+on_ind_dat <- tbl(con, config$provinces$ONT$table1) %>% arrange(date_time_local) %>% collect()
+bc_ind_dat_1 <- tbl(con, config$provinces$BC$table2) %>% collect()
+bc_ind_dat_2 <- tbl(con, config$provinces$BC$table3) %>% arrange(date_time_local) %>% collect()
+ns_ind_dat_1 <- tbl(con, config$provinces$NS$table2) %>% arrange(Date_time_local) %>% collect()
+nfl_ind_dat <- tbl(con, config$provinces$NFL$table1) %>% arrange(Date_time_local) %>% collect()
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
   
-  # notifications <- reactive({list(notificationItem(
-  #    text = "Currently, No Notification",
-  #    icon = icon("check-circle"),
-  #    status = "success"
-  #))})
   
-  #if(is_null(notifications)){
-  #output$Notifications_type <- renderMenu(
-  #    dropdownMenu(type = "notifications", notificationItem(
-  #        text = "Currently, No Notification",
-  #        icon = icon("check-circle"),
-  #        status = "success"
-  #    ))
-  #)}
-  #else
-  #{
-  #    output$Notifications_type <- renderMenu(
-  #        dropdownMenu(type = "notifications", .list = notifications()))       
-  #}
   
   output$timer <- renderText({invalidateLater(1000, session)
     paste("",Sys.time())})
   
-  check_db_nb <- function(){tbl(con, tables[[1]]) %>% count(Date_time_local)}
-  get_data_nb <- function(){tbl(con, tables[[1]]) %>% arrange(Date_time_local) %>% collect()}
+  check_db_nb <- function(){tbl(con, config$provinces$NB$table1) %>% count(Date_time_local)}
+  get_data_nb <- function(){tbl(con, config$provinces$NB$table1) %>% arrange(Date_time_local) %>% collect()}
   nbload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                   checkFunc = check_db_nb, valueFunc = get_data_nb)
   nbload_data <- reactive({nbload_data_pre()})
@@ -818,8 +885,8 @@ server <- function(input, output, session) {
       hc_navigator(enabled = TRUE)
   })
   
-  check_db_ns <- function(){tbl(con, tables[[2]]) %>% count(Date_time_local)}
-  get_data_ns <- function(){tbl(con, tables[[2]]) %>% arrange(Date_time_local) %>% collect()}
+  check_db_ns <- function(){tbl(con, config$provinces$NS$table1) %>% count(Date_time_local)}
+  get_data_ns <- function(){tbl(con, config$provinces$NS$table1) %>% arrange(Date_time_local) %>% collect()}
   nsload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                   checkFunc = check_db_ns, valueFunc = get_data_ns)
   nsload_data <- reactive({nsload_data_pre()})
@@ -831,7 +898,7 @@ server <- function(input, output, session) {
       hc_add_series(ns_load_ts(), type = "line", name = "Load: ", color = "green") %>% 
       hc_navigator(enabled = TRUE)}) 
   
-  bcload_data <- tbl(con, tables[[3]]) %>% arrange(Date_time_local) %>% collect()
+  bcload_data <- tbl(con, config$provinces$BC$table1) %>% arrange(Date_time_local) %>% collect()
   bcload_date <- as.Date(tail(bcload_data$Date_time_local,1))
   bcload_subset <- subset(bcload_data,subset = Date_time_local >= (bcload_date - 4) & Date_time_local <= bcload_date)
   bc_load_ts <-  xts(bcload_subset$Balancing_Authority_Load,bcload_subset$Date_time_local)
@@ -844,8 +911,8 @@ server <- function(input, output, session) {
   
   output$AB_load <- renderHighchart({ab_load_chart})
   
-  check_db_on <- function(){tbl(con, tables[[5]]) %>% count(date_time_local)}
-  get_data_on <- function(){tbl(con, tables[[5]]) %>% arrange(date_time_local) %>% collect()}
+  check_db_on <- function(){tbl(con, config$provinces$ONT$table1) %>% count(date_time_local)}
+  get_data_on <- function(){tbl(con, config$provinces$ONT$table1) %>% arrange(date_time_local) %>% collect()}
   onload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                   checkFunc = check_db_on, valueFunc = get_data_on)
   onload_data <- reactive({onload_data_pre()})
@@ -857,8 +924,8 @@ server <- function(input, output, session) {
       hc_add_series(on_load_ts(), type = "line", name = "Load: ", color = "orange") %>% 
       hc_navigator(enabled = TRUE)})
   
-  check_db_pei <- function(){tbl(con, tables[[6]]) %>% count(Date_time_local)}
-  get_data_pei <- function(){tbl(con, tables[[6]]) %>% arrange(Date_time_local) %>% collect()}
+  check_db_pei <- function(){tbl(con, config$provinces$PEI$table1) %>% count(Date_time_local)}
+  get_data_pei <- function(){tbl(con, config$provinces$PEI$table1) %>% arrange(Date_time_local) %>% collect()}
   peiload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                    checkFunc = check_db_pei, valueFunc = get_data_pei)
   peiload_data <- reactive({peiload_data_pre()})
@@ -869,6 +936,32 @@ server <- function(input, output, session) {
       hc_xAxis(type = "datetime") %>% 
       hc_add_series(pei_load_ts(), type = "line", name = "Load: ", color = "red") %>% 
       hc_navigator(enabled = TRUE)}) 
+  
+  check_db_nfl <- function(){tbl(con, config$provinces$NFL$table1) %>% count(Date_time_local)}
+  get_data_nfl <- function(){tbl(con, config$provinces$NFL$table1) %>% arrange(Date_time_local) %>% collect()}
+  nflload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
+                                   checkFunc = check_db_nfl, valueFunc = get_data_nfl)
+  nflload_data <- reactive({nflload_data_pre()})
+  nflload_subset <- reactive({subset(nflload_data(),subset = nflload_data()$Date_time_local >= previous_time_1)})
+  nfl_load_ts <-  reactive({xts(nflload_subset()$Net_Load_MW,nflload_subset()$Date_time_local)})
+  
+  output$NFL_load <- renderHighchart({highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(nfl_load_ts(), type = "line", name = "Load: ", color = "red") %>% 
+      hc_navigator(enabled = TRUE)})
+  
+  check_db_qb <- function(){tbl(con, config$provinces$QUEBEC$table1) %>% count(Date_time_local)}
+  get_data_qb <- function(){tbl(con, config$provinces$QUEBEC$table1) %>% arrange(Date_time_local) %>% collect()}
+  qbload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
+                                   checkFunc = check_db_qb, valueFunc = get_data_qb)
+  qbload_data <- reactive({qbload_data_pre()})
+  qbload_subset <- reactive({subset(qbload_data(),subset = qbload_data()$Date_time_local >= previous_time_1)})
+  qb_load_ts <-  reactive({xts(qbload_subset()$total_demand,qbload_subset()$Date_time_local)})
+  
+  output$QB_load <- renderHighchart({highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_load_ts(), type = "line", name = "Load: ", color = "red") %>% 
+      hc_navigator(enabled = TRUE)})
   
   
   pei_date_ind_1_1 <- reactive({paste(input$pei_dates_1[1],"00:00:00",sep = " ")})
@@ -1235,6 +1328,47 @@ server <- function(input, output, session) {
       hc_add_series(nb_30_subset_ts(), type = "line", name = "High Load: ", color = "green")
   })
   
+  nfl_date_ind_1_1 <- reactive({paste(input$nfl_dates_1[1],"00:00:00",sep = " ")})
+  nfl_date_ind_1_2 <- reactive({paste(input$nfl_dates_1[2],"00:00:00",sep = " ")})
+  nfl_load_subset_dat <- reactive({subset(nfl_ind_dat,subset = (nfl_ind_dat$Date_time_local >= nfl_date_ind_1_1() & nfl_ind_dat$Date_time_local <= nfl_date_ind_1_2()))})
+  nfl_load_dat_ts <- reactive({xts(nfl_ind_dat$Net_Load_MW,nfl_ind_dat$Date_time_local)})
+  nfl_load_subset_ts <- reactive({xts(nfl_load_subset_dat()$Net_Load_MW,nfl_load_subset_dat()$Date_time_local)})
+  nfl_load_dat_ts_yearly <- reactive({to.yearly(nfl_load_dat_ts())})
+  nfl_load_dat_ts_monthly <- reactive({to.monthly(nfl_load_subset_ts())})
+  nfl_load_dat_ts_weekly <- reactive({to.weekly(nfl_load_subset_ts())})
+  nfl_load_dat_ts_daily <- reactive({to.daily(nfl_load_subset_ts())})
+  nfl_load_dat_ts_hourly <- reactive({to.hourly(nfl_load_subset_ts())})
+  
+  output$NFL_LOAD_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(nfl_load_dat_ts_yearly()[,(colnames(nfl_load_dat_ts_yearly()) %in% c('nfl_load_dat_ts().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(nfl_load_dat_ts_yearly()[,(colnames(nfl_load_dat_ts_yearly()) %in% c('nfl_load_dat_ts().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NFL_LOAD_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(nfl_load_dat_ts_weekly()[,(colnames(nfl_load_dat_ts_weekly()) %in% c('nfl_load_subset_ts().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(nfl_load_dat_ts_weekly()[,(colnames(nfl_load_dat_ts_weekly()) %in% c('nfl_load_subset_ts().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NFL_LOAD_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(nfl_load_dat_ts_daily()[,(colnames(nfl_load_dat_ts_daily()) %in% c('nfl_load_subset_ts().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(nfl_load_dat_ts_daily()[,(colnames(nfl_load_dat_ts_daily()) %in% c('nfl_load_subset_ts().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NFL_LOAD_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(nfl_load_dat_ts_hourly()[,(colnames(nfl_load_dat_ts_hourly()) %in% c('nfl_load_subset_ts().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(nfl_load_dat_ts_hourly()[,(colnames(nfl_load_dat_ts_hourly()) %in% c('nfl_load_subset_ts().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NFL_LOAD_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(nfl_load_subset_ts(), type = "line", name = "High Load: ", color = "green")
+  })
+  
   ns_date_ind_1_1 <- reactive({paste(input$ns_dates_1[1],"00:00:00",sep = " ")})
   ns_date_ind_1_2 <- reactive({paste(input$ns_dates_1[2],"00:00:00",sep = " ")})
   ns_load_subset_dat <- reactive({subset(ns_ind_dat,subset = (ns_ind_dat$Date_time_local >= ns_date_ind_1_1() & ns_ind_dat$Date_time_local <= ns_date_ind_1_2()))})
@@ -1275,6 +1409,298 @@ server <- function(input, output, session) {
       hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
       hc_add_series(ns_load_subset_ts(), type = "line", name = "High Load: ", color = "green")
   })
+  
+  ns_date_ind_2_1 <- reactive({paste(input$ns_dates_2[1],"00:00:00",sep = " ")})
+  ns_date_ind_2_2 <- reactive({paste(input$ns_dates_2[2],"00:00:00",sep = " ")})
+  ns_date_ind_3_1 <- reactive({paste(input$ns_dates_3[1],"00:00:00",sep = " ")})
+  ns_date_ind_3_2 <- reactive({paste(input$ns_dates_3[2],"00:00:00",sep = " ")})
+  ns_date_ind_4_1 <- reactive({paste(input$ns_dates_4[1],"00:00:00",sep = " ")})
+  ns_date_ind_4_2 <- reactive({paste(input$ns_dates_4[2],"00:00:00",sep = " ")})
+  ns_date_ind_5_1 <- reactive({paste(input$ns_dates_5[1],"00:00:00",sep = " ")})
+  ns_date_ind_5_2 <- reactive({paste(input$ns_dates_5[2],"00:00:00",sep = " ")})
+  
+  ns_exp_subset_dat_1 <- reactive({subset(ns_ind_dat_1,subset = (ns_ind_dat_1$Date_time_local >= ns_date_ind_2_1() & ns_ind_dat_1$Date_time_local <= ns_date_ind_2_2()))})
+  ns_exp_subset_dat_2 <- reactive({subset(ns_ind_dat_1,subset = (ns_ind_dat_1$Date_time_local >= ns_date_ind_3_1() & ns_ind_dat_1$Date_time_local <= ns_date_ind_3_2()))})
+  ns_exp_subset_dat_3 <- reactive({subset(ns_ind_dat_1,subset = (ns_ind_dat_1$Date_time_local >= ns_date_ind_4_1() & ns_ind_dat_1$Date_time_local <= ns_date_ind_4_2()))})
+  ns_exp_subset_dat_4 <- reactive({subset(ns_ind_dat_1,subset = (ns_ind_dat_1$Date_time_local >= ns_date_ind_5_1() & ns_ind_dat_1$Date_time_local <= ns_date_ind_5_2()))})
+  
+  ns_exp_dat_ts_1 <- reactive({xts(ns_ind_dat_1$Highlands_Export,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_2 <- reactive({xts(ns_ind_dat_1$East_End_Export_At_Sydney,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_3 <- reactive({xts(ns_ind_dat_1$East_End_Export_At_East_Bay,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_4 <- reactive({xts(ns_ind_dat_1$Cape_Breton_Export,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_5 <- reactive({xts(ns_ind_dat_1$Onslow_Import,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_6 <- reactive({xts(ns_ind_dat_1$NS_Export,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_7 <- reactive({xts(ns_ind_dat_1$Onslow_South,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_8 <- reactive({xts(ns_ind_dat_1$Flow_Into_Metro,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_9 <- reactive({xts(ns_ind_dat_1$Western_Import,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_10 <- reactive({xts(ns_ind_dat_1$Valley_Import,ns_ind_dat_1$Date_time_local)})
+  ns_exp_dat_ts_11 <- reactive({xts(ns_ind_dat_1$Maritime_Link_Import,ns_ind_dat_1$Date_time_local)})
+  
+  ns_exp_subset_ts_1 <- reactive({xts(ns_exp_subset_dat_1()$Highlands_Export,ns_exp_subset_dat_1()$Date_time_local)})
+  ns_exp_subset_ts_2 <- reactive({xts(ns_exp_subset_dat_1()$East_End_Export_At_Sydney,ns_exp_subset_dat_1()$Date_time_local)})
+  ns_exp_subset_ts_3 <- reactive({xts(ns_exp_subset_dat_1()$East_End_Export_At_East_Bay,ns_exp_subset_dat_1()$Date_time_local)})
+  
+  ns_exp_subset_ts_4 <- reactive({xts(ns_exp_subset_dat_2()$Cape_Breton_Export,ns_exp_subset_dat_2()$Date_time_local)})
+  ns_exp_subset_ts_5 <- reactive({xts(ns_exp_subset_dat_2()$NS_Export,ns_exp_subset_dat_2()$Date_time_local)})
+  ns_exp_subset_ts_6 <- reactive({xts(ns_exp_subset_dat_2()$Flow_Into_Metro,ns_exp_subset_dat_2()$Date_time_local)})
+  
+  ns_exp_subset_ts_7 <- reactive({xts(ns_exp_subset_dat_3()$Western_Import,ns_exp_subset_dat_3()$Date_time_local)})
+  ns_exp_subset_ts_8 <- reactive({xts(ns_exp_subset_dat_3()$Valley_Import,ns_exp_subset_dat_3()$Date_time_local)})
+  ns_exp_subset_ts_9 <- reactive({xts(ns_exp_subset_dat_3()$Maritime_Link_Import,ns_exp_subset_dat_3()$Date_time_local)})
+  
+  ns_exp_subset_ts_10 <- reactive({xts(ns_exp_subset_dat_4()$Onslow_Import,ns_exp_subset_dat_4()$Date_time_local)})
+  ns_exp_subset_ts_11 <- reactive({xts(ns_exp_subset_dat_4()$Onslow_South,ns_exp_subset_dat_4()$Date_time_local)})
+  
+  ns_exp_dat_ts_1_yearly <- reactive({to.yearly(ns_exp_dat_ts_1())})
+  ns_exp_dat_ts_1_monthly <- reactive({to.monthly(ns_exp_subset_ts_1())})
+  ns_exp_dat_ts_1_weekly <- reactive({to.weekly(ns_exp_subset_ts_1())})
+  ns_exp_dat_ts_1_daily <- reactive({to.daily(ns_exp_subset_ts_1())})
+  ns_exp_dat_ts_1_hourly <- reactive({to.hourly(ns_exp_subset_ts_1())})
+  
+  ns_exp_dat_ts_2_yearly <- reactive({to.yearly(ns_exp_dat_ts_2())})
+  ns_exp_dat_ts_2_monthly <- reactive({to.monthly(ns_exp_subset_ts_2())})
+  ns_exp_dat_ts_2_weekly <- reactive({to.weekly(ns_exp_subset_ts_2())})
+  ns_exp_dat_ts_2_daily <- reactive({to.daily(ns_exp_subset_ts_2())})
+  ns_exp_dat_ts_2_hourly <- reactive({to.hourly(ns_exp_subset_ts_2())})
+  
+  ns_exp_dat_ts_3_yearly <- reactive({to.yearly(ns_exp_dat_ts_3())})
+  ns_exp_dat_ts_3_monthly <- reactive({to.monthly(ns_exp_subset_ts_3())})
+  ns_exp_dat_ts_3_weekly <- reactive({to.weekly(ns_exp_subset_ts_3())})
+  ns_exp_dat_ts_3_daily <- reactive({to.daily(ns_exp_subset_ts_3())})
+  ns_exp_dat_ts_3_hourly <- reactive({to.hourly(ns_exp_subset_ts_3())})
+  
+  ns_exp_dat_ts_4_yearly <- reactive({to.yearly(ns_exp_dat_ts_4())})
+  ns_exp_dat_ts_4_monthly <- reactive({to.monthly(ns_exp_subset_ts_4())})
+  ns_exp_dat_ts_4_weekly <- reactive({to.weekly(ns_exp_subset_ts_4())})
+  ns_exp_dat_ts_4_daily <- reactive({to.daily(ns_exp_subset_ts_4())})
+  ns_exp_dat_ts_4_hourly <- reactive({to.hourly(ns_exp_subset_ts_4())})
+  
+  ns_exp_dat_ts_5_yearly <- reactive({to.yearly(ns_exp_dat_ts_5())})
+  ns_exp_dat_ts_5_monthly <- reactive({to.monthly(ns_exp_subset_ts_5())})
+  ns_exp_dat_ts_5_weekly <- reactive({to.weekly(ns_exp_subset_ts_5())})
+  ns_exp_dat_ts_5_daily <- reactive({to.daily(ns_exp_subset_ts_5())})
+  ns_exp_dat_ts_5_hourly <- reactive({to.hourly(ns_exp_subset_ts_5())})
+  
+  ns_exp_dat_ts_6_yearly <- reactive({to.yearly(ns_exp_dat_ts_6())})
+  ns_exp_dat_ts_6_monthly <- reactive({to.monthly(ns_exp_subset_ts_6())})
+  ns_exp_dat_ts_6_weekly <- reactive({to.weekly(ns_exp_subset_ts_6())})
+  ns_exp_dat_ts_6_daily <- reactive({to.daily(ns_exp_subset_ts_6())})
+  ns_exp_dat_ts_6_hourly <- reactive({to.hourly(ns_exp_subset_ts_6())})
+  
+  ns_exp_dat_ts_7_yearly <- reactive({to.yearly(ns_exp_dat_ts_7())})
+  ns_exp_dat_ts_7_monthly <- reactive({to.monthly(ns_exp_subset_ts_7())})
+  ns_exp_dat_ts_7_weekly <- reactive({to.weekly(ns_exp_subset_ts_7())})
+  ns_exp_dat_ts_7_daily <- reactive({to.daily(ns_exp_subset_ts_7())})
+  ns_exp_dat_ts_7_hourly <- reactive({to.hourly(ns_exp_subset_ts_7())})
+  
+  ns_exp_dat_ts_8_yearly <- reactive({to.yearly(ns_exp_dat_ts_8())})
+  ns_exp_dat_ts_8_monthly <- reactive({to.monthly(ns_exp_subset_ts_8())})
+  ns_exp_dat_ts_8_weekly <- reactive({to.weekly(ns_exp_subset_ts_8())})
+  ns_exp_dat_ts_8_daily <- reactive({to.daily(ns_exp_subset_ts_8())})
+  ns_exp_dat_ts_8_hourly <- reactive({to.hourly(ns_exp_subset_ts_8())})
+  
+  ns_exp_dat_ts_9_yearly <- reactive({to.yearly(ns_exp_dat_ts_9())})
+  ns_exp_dat_ts_9_monthly <- reactive({to.monthly(ns_exp_subset_ts_9())})
+  ns_exp_dat_ts_9_weekly <- reactive({to.weekly(ns_exp_subset_ts_9())})
+  ns_exp_dat_ts_9_daily <- reactive({to.daily(ns_exp_subset_ts_9())})
+  ns_exp_dat_ts_9_hourly <- reactive({to.hourly(ns_exp_subset_ts_9())})
+  
+  ns_exp_dat_ts_10_yearly <- reactive({to.yearly(ns_exp_dat_ts_10())})
+  ns_exp_dat_ts_10_monthly <- reactive({to.monthly(ns_exp_subset_ts_10())})
+  ns_exp_dat_ts_10_weekly <- reactive({to.weekly(ns_exp_subset_ts_10())})
+  ns_exp_dat_ts_10_daily <- reactive({to.daily(ns_exp_subset_ts_10())})
+  ns_exp_dat_ts_10_hourly <- reactive({to.hourly(ns_exp_subset_ts_10())})
+  
+  ns_exp_dat_ts_11_yearly <- reactive({to.yearly(ns_exp_dat_ts_11())})
+  ns_exp_dat_ts_11_monthly <- reactive({to.monthly(ns_exp_subset_ts_11())})
+  ns_exp_dat_ts_11_weekly <- reactive({to.weekly(ns_exp_subset_ts_11())})
+  ns_exp_dat_ts_11_daily <- reactive({to.daily(ns_exp_subset_ts_11())})
+  ns_exp_dat_ts_11_hourly <- reactive({to.hourly(ns_exp_subset_ts_11())})
+  
+  output$NS_EXP_1_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_1_yearly()[,(colnames(ns_exp_dat_ts_1_yearly()) %in% c('ns_exp_dat_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_1_yearly()[,(colnames(ns_exp_dat_ts_1_yearly()) %in% c('ns_exp_dat_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_2_yearly()[,(colnames(ns_exp_dat_ts_2_yearly()) %in% c('ns_exp_dat_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_2_yearly()[,(colnames(ns_exp_dat_ts_2_yearly()) %in% c('ns_exp_dat_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_3_yearly()[,(colnames(ns_exp_dat_ts_3_yearly()) %in% c('ns_exp_dat_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_3_yearly()[,(colnames(ns_exp_dat_ts_3_yearly()) %in% c('ns_exp_dat_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_1_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_1_weekly()[,(colnames(ns_exp_dat_ts_1_weekly()) %in% c('ns_exp_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_1_weekly()[,(colnames(ns_exp_dat_ts_1_weekly()) %in% c('ns_exp_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_2_weekly()[,(colnames(ns_exp_dat_ts_2_weekly()) %in% c('ns_exp_subset_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_2_weekly()[,(colnames(ns_exp_dat_ts_2_weekly()) %in% c('ns_exp_subset_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_3_weekly()[,(colnames(ns_exp_dat_ts_3_weekly()) %in% c('ns_exp_subset_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_3_weekly()[,(colnames(ns_exp_dat_ts_3_weekly()) %in% c('ns_exp_subset_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_1_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_1_daily()[,(colnames(ns_exp_dat_ts_1_daily()) %in% c('ns_exp_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_1_daily()[,(colnames(ns_exp_dat_ts_1_daily()) %in% c('ns_exp_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_2_daily()[,(colnames(ns_exp_dat_ts_2_daily()) %in% c('ns_exp_subset_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_2_daily()[,(colnames(ns_exp_dat_ts_2_daily()) %in% c('ns_exp_subset_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_3_daily()[,(colnames(ns_exp_dat_ts_3_daily()) %in% c('ns_exp_subset_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_3_daily()[,(colnames(ns_exp_dat_ts_3_daily()) %in% c('ns_exp_subset_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_1_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_1_hourly()[,(colnames(ns_exp_dat_ts_1_hourly()) %in% c('ns_exp_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_1_hourly()[,(colnames(ns_exp_dat_ts_1_hourly()) %in% c('ns_exp_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_2_hourly()[,(colnames(ns_exp_dat_ts_2_hourly()) %in% c('ns_exp_subset_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_2_hourly()[,(colnames(ns_exp_dat_ts_2_hourly()) %in% c('ns_exp_subset_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_3_hourly()[,(colnames(ns_exp_dat_ts_3_hourly()) %in% c('ns_exp_subset_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_3_hourly()[,(colnames(ns_exp_dat_ts_3_hourly()) %in% c('ns_exp_subset_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_1_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ns_exp_subset_ts_1(), type = "line", name = "High Load: ", color = "green")%>%
+      hc_add_series(ns_exp_subset_ts_2(), type = "line", name = "High Load: ", color = "green")%>%
+      hc_add_series(ns_exp_subset_ts_3(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  output$NS_EXP_2_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_4_yearly()[,(colnames(ns_exp_dat_ts_4_yearly()) %in% c('ns_exp_dat_ts_4().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_4_yearly()[,(colnames(ns_exp_dat_ts_4_yearly()) %in% c('ns_exp_dat_ts_4().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_5_yearly()[,(colnames(ns_exp_dat_ts_5_yearly()) %in% c('ns_exp_dat_ts_5().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_5_yearly()[,(colnames(ns_exp_dat_ts_5_yearly()) %in% c('ns_exp_dat_ts_5().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_6_yearly()[,(colnames(ns_exp_dat_ts_6_yearly()) %in% c('ns_exp_dat_ts_6().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_6_yearly()[,(colnames(ns_exp_dat_ts_6_yearly()) %in% c('ns_exp_dat_ts_6().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_2_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_4_weekly()[,(colnames(ns_exp_dat_ts_4_weekly()) %in% c('ns_exp_subset_ts_4().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_4_weekly()[,(colnames(ns_exp_dat_ts_4_weekly()) %in% c('ns_exp_subset_ts_4().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_5_weekly()[,(colnames(ns_exp_dat_ts_5_weekly()) %in% c('ns_exp_subset_ts_5().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_5_weekly()[,(colnames(ns_exp_dat_ts_5_weekly()) %in% c('ns_exp_subset_ts_5().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_6_weekly()[,(colnames(ns_exp_dat_ts_6_weekly()) %in% c('ns_exp_subset_ts_6().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_6_weekly()[,(colnames(ns_exp_dat_ts_6_weekly()) %in% c('ns_exp_subset_ts_6().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_2_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_4_daily()[,(colnames(ns_exp_dat_ts_4_daily()) %in% c('ns_exp_subset_ts_4().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_4_daily()[,(colnames(ns_exp_dat_ts_4_daily()) %in% c('ns_exp_subset_ts_4().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_5_daily()[,(colnames(ns_exp_dat_ts_5_daily()) %in% c('ns_exp_subset_ts_5().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_5_daily()[,(colnames(ns_exp_dat_ts_5_daily()) %in% c('ns_exp_subset_ts_5().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_6_daily()[,(colnames(ns_exp_dat_ts_6_daily()) %in% c('ns_exp_subset_ts_6().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_6_daily()[,(colnames(ns_exp_dat_ts_6_daily()) %in% c('ns_exp_subset_ts_6().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_2_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_4_hourly()[,(colnames(ns_exp_dat_ts_4_hourly()) %in% c('ns_exp_subset_ts_4().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_4_hourly()[,(colnames(ns_exp_dat_ts_4_hourly()) %in% c('ns_exp_subset_ts_4().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_5_hourly()[,(colnames(ns_exp_dat_ts_5_hourly()) %in% c('ns_exp_subset_ts_5().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_5_hourly()[,(colnames(ns_exp_dat_ts_5_hourly()) %in% c('ns_exp_subset_ts_5().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_6_hourly()[,(colnames(ns_exp_dat_ts_6_hourly()) %in% c('ns_exp_subset_ts_6().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_6_hourly()[,(colnames(ns_exp_dat_ts_6_hourly()) %in% c('ns_exp_subset_ts_6().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_2_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ns_exp_subset_ts_4(), type = "line", name = "High Load: ", color = "green")%>%
+      hc_add_series(ns_exp_subset_ts_5(), type = "line", name = "High Load: ", color = "green")%>%
+      hc_add_series(ns_exp_subset_ts_6(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  output$NS_EXP_3_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_7_yearly()[,(colnames(ns_exp_dat_ts_7_yearly()) %in% c('ns_exp_dat_ts_7().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_7_yearly()[,(colnames(ns_exp_dat_ts_7_yearly()) %in% c('ns_exp_dat_ts_7().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_8_yearly()[,(colnames(ns_exp_dat_ts_8_yearly()) %in% c('ns_exp_dat_ts_8().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_8_yearly()[,(colnames(ns_exp_dat_ts_8_yearly()) %in% c('ns_exp_dat_ts_8().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_9_yearly()[,(colnames(ns_exp_dat_ts_9_yearly()) %in% c('ns_exp_dat_ts_9().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_9_yearly()[,(colnames(ns_exp_dat_ts_9_yearly()) %in% c('ns_exp_dat_ts_9().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_3_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_7_weekly()[,(colnames(ns_exp_dat_ts_7_weekly()) %in% c('ns_exp_subset_ts_7().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_7_weekly()[,(colnames(ns_exp_dat_ts_7_weekly()) %in% c('ns_exp_subset_ts_7().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_8_weekly()[,(colnames(ns_exp_dat_ts_8_weekly()) %in% c('ns_exp_subset_ts_8().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_8_weekly()[,(colnames(ns_exp_dat_ts_8_weekly()) %in% c('ns_exp_subset_ts_8().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_9_weekly()[,(colnames(ns_exp_dat_ts_9_weekly()) %in% c('ns_exp_subset_ts_9().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_9_weekly()[,(colnames(ns_exp_dat_ts_9_weekly()) %in% c('ns_exp_subset_ts_9().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_3_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_7_daily()[,(colnames(ns_exp_dat_ts_7_daily()) %in% c('ns_exp_subset_ts_7().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_7_daily()[,(colnames(ns_exp_dat_ts_7_daily()) %in% c('ns_exp_subset_ts_7().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_8_daily()[,(colnames(ns_exp_dat_ts_8_daily()) %in% c('ns_exp_subset_ts_8().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_8_daily()[,(colnames(ns_exp_dat_ts_8_daily()) %in% c('ns_exp_subset_ts_8().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_9_daily()[,(colnames(ns_exp_dat_ts_9_daily()) %in% c('ns_exp_subset_ts_9().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_9_daily()[,(colnames(ns_exp_dat_ts_9_daily()) %in% c('ns_exp_subset_ts_9().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_3_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_7_hourly()[,(colnames(ns_exp_dat_ts_7_hourly()) %in% c('ns_exp_subset_ts_7().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_7_hourly()[,(colnames(ns_exp_dat_ts_7_hourly()) %in% c('ns_exp_subset_ts_7().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_8_hourly()[,(colnames(ns_exp_dat_ts_8_hourly()) %in% c('ns_exp_subset_ts_8().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_8_hourly()[,(colnames(ns_exp_dat_ts_8_hourly()) %in% c('ns_exp_subset_ts_8().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_9_hourly()[,(colnames(ns_exp_dat_ts_9_hourly()) %in% c('ns_exp_subset_ts_9().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_9_hourly()[,(colnames(ns_exp_dat_ts_9_hourly()) %in% c('ns_exp_subset_ts_9().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_3_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ns_exp_subset_ts_7(), type = "line", name = "High Load: ", color = "green")%>%
+      hc_add_series(ns_exp_subset_ts_8(), type = "line", name = "High Load: ", color = "green")%>%
+      hc_add_series(ns_exp_subset_ts_9(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  output$NS_EXP_4_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_10_yearly()[,(colnames(ns_exp_dat_ts_10_yearly()) %in% c('ns_exp_dat_ts_10().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_10_yearly()[,(colnames(ns_exp_dat_ts_10_yearly()) %in% c('ns_exp_dat_ts_10().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_11_yearly()[,(colnames(ns_exp_dat_ts_11_yearly()) %in% c('ns_exp_dat_ts_11().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_11_yearly()[,(colnames(ns_exp_dat_ts_11_yearly()) %in% c('ns_exp_dat_ts_11().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_4_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_10_weekly()[,(colnames(ns_exp_dat_ts_10_weekly()) %in% c('ns_exp_subset_ts_10().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_10_weekly()[,(colnames(ns_exp_dat_ts_10_weekly()) %in% c('ns_exp_subset_ts_10().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_11_weekly()[,(colnames(ns_exp_dat_ts_11_weekly()) %in% c('ns_exp_subset_ts_11().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_11_weekly()[,(colnames(ns_exp_dat_ts_11_weekly()) %in% c('ns_exp_subset_ts_11().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_4_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_10_daily()[,(colnames(ns_exp_dat_ts_10_daily()) %in% c('ns_exp_subset_ts_10().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_10_daily()[,(colnames(ns_exp_dat_ts_10_daily()) %in% c('ns_exp_subset_ts_10().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_11_daily()[,(colnames(ns_exp_dat_ts_11_daily()) %in% c('ns_exp_subset_ts_11().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_11_daily()[,(colnames(ns_exp_dat_ts_11_daily()) %in% c('ns_exp_subset_ts_11().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_4_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ns_exp_dat_ts_10_hourly()[,(colnames(ns_exp_dat_ts_10_hourly()) %in% c('ns_exp_subset_ts_10().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_10_hourly()[,(colnames(ns_exp_dat_ts_10_hourly()) %in% c('ns_exp_subset_ts_10().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(ns_exp_dat_ts_11_hourly()[,(colnames(ns_exp_dat_ts_11_hourly()) %in% c('ns_exp_subset_ts_11().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(ns_exp_dat_ts_11_hourly()[,(colnames(ns_exp_dat_ts_11_hourly()) %in% c('ns_exp_subset_ts_11().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$NS_EXP_4_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ns_exp_subset_ts_10(), type = "line", name = "High Load: ", color = "green")%>%
+      hc_add_series(ns_exp_subset_ts_11(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+     
   
   on_date_ind_1_1 <- reactive({paste(input$on_dates_1[1],"00:00:00",sep = " ")})
   on_date_ind_1_2 <- reactive({paste(input$on_dates_1[2],"00:00:00",sep = " ")})
@@ -1471,7 +1897,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_pei_ind_1,{
-    createAlert(session, "NB_1", content = paste("please select this table:",tables[[1]], sep = " "), style = "info", dismiss = TRUE)
+    createAlert(session, "NB_1", content = paste("please select this table:",config$provinces$NB$table1, sep = " "), style = "info", dismiss = TRUE)
     Sys.sleep(0.5)
     updateTabsetPanel(session = session, inputId = "rted_menu", selected = "Dwn") 
   })
@@ -1574,10 +2000,41 @@ server <- function(input, output, session) {
       ns_dd_1 <- as.Date(Sys.Date())-(7)
       ns_dd_1_1 <- paste(ns_dd_1,"00:00:00",sep=" ")
       ns_dd_2_2 <- as.Date(tail(ns_ind_dat$Date_time_local,1))
+      ns_dd_3_2 <- as.Date(tail(ns_ind_dat_1$Date_time_local,1))
       updateSliderInput(session, "ns_dates_1",
                         min = as.Date(head(ns_ind_dat$Date_time_local,1),"%Y-%m-%d"),
                         max = as.Date(tail(ns_ind_dat$Date_time_local,1),"%Y-%m-%d"),
                         value=c(as.Date(ns_dd_1_1),ns_dd_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "ns_dates_2",
+                        min = as.Date(head(ns_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ns_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(ns_dd_1_1),ns_dd_3_2),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "ns_dates_3",
+                        min = as.Date(head(ns_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ns_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(ns_dd_1_1),ns_dd_3_2),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "ns_dates_4",
+                        min = as.Date(head(ns_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ns_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(ns_dd_1_1),ns_dd_3_2),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "ns_dates_5",
+                        min = as.Date(head(ns_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ns_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(ns_dd_1_1),ns_dd_3_2),
+                        timeFormat="%Y-%m-%d")
+    }
+    if(input$rted_menu == "NFL"){
+      nfl_dd_1 <- as.Date(Sys.Date())-(7)
+      nfl_dd_1_1 <- paste(nfl_dd_1,"00:00:00",sep=" ")
+      nfl_dd_2_2 <- as.Date(tail(nfl_ind_dat$Date_time_local,1))
+      updateSliderInput(session, "nfl_dates_1",
+                        min = as.Date(head(nfl_ind_dat$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(nfl_ind_dat$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(nfl_dd_1_1),nfl_dd_2_2),
                         timeFormat="%Y-%m-%d")
     }
     if(input$rted_menu == "ON"){
