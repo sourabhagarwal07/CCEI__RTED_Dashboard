@@ -3,23 +3,23 @@
     "path": "C:/Users/sourabhagarwal/Desktop/rstudio_dbconnect.R",
     "project_path": null,
     "type": "r_source",
-    "hash": "1560670233",
+    "hash": "3227980137",
     "contents": "",
     "dirty": false,
     "created": 1628640579798.0,
     "source_on_save": false,
     "relative_order": 2,
     "properties": {
-        "cursorPosition": "330,2",
-        "scrollLine": "281",
+        "cursorPosition": "16,40",
+        "scrollLine": "0",
         "disableDependencyDiscovery": "1"
     },
     "folds": "",
-    "lastKnownWriteTime": 1636927614,
+    "lastKnownWriteTime": 1636995395,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1636927614435,
+    "last_content_update": 1636995395543,
     "read_only": false,
     "read_only_alternatives": []
 }

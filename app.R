@@ -19,6 +19,7 @@ library(shinycustomloader)
 library(shinyBS)
 library(config)
 library(shi18ny)
+library(readxl)
 
 config <- config::get()
 con <- DBI::dbConnect(odbc::odbc(), 
@@ -708,8 +709,102 @@ margin-bottom : -15px;
               ),
       tabItem(tabName = "QB",h2("hello world")),
       tabItem(tabName = "AB",h2("hello world")),
-      tabItem(tabName = "BC",h2("hello World 5")),
-      tabItem(tabName = "DD",h2("Data Dicitionary")),
+      tabItem(tabName = "BC",
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "BC Balancing_Authority_Load (BAL)", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_bc_1", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_bc_1 != 1",sliderInput("bc_dates_1",
+                                                                                                                                      "Dates",
+                                                                                                                                      min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                      max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                      value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                      timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_bc_1 == 1",
+                                           fluidRow(withLoader(highchartOutput("BC_LOAD_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_1 == 6",
+                                           fluidRow(withLoader(highchartOutput("BC_LOAD_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_1 == 3",
+                                           fluidRow(withLoader(highchartOutput("BC_LOAD_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_1 == 4",
+                                           fluidRow(withLoader(highchartOutput("BC_LOAD_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_1 == 5",
+                                           fluidRow(withLoader(highchartOutput("BC_LOAD_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "BC - US Exchange", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_bc_2", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_bc_2 != 1",sliderInput("bc_dates_2",
+                                                                                                                                      "Dates",
+                                                                                                                                      min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                      max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                      value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                      timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_bc_2 == 1",
+                                           fluidRow(withLoader(highchartOutput("BC_US_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_2 == 6",
+                                           fluidRow(withLoader(highchartOutput("BC_US_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_2 == 3",
+                                           fluidRow(withLoader(highchartOutput("BC_US_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_2 == 4",
+                                           fluidRow(withLoader(highchartOutput("BC_US_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_2 == 5",
+                                           fluidRow(withLoader(highchartOutput("BC_US_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "BC - AB Exchange", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_bc_3", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_bc_3 != 1",sliderInput("bc_dates_3",
+                                                                                                                                      "Dates",
+                                                                                                                                      min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                      max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                      value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                      timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_bc_3 == 1",
+                                           fluidRow(withLoader(highchartOutput("BC_AB_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_3 == 6",
+                                           fluidRow(withLoader(highchartOutput("BC_AB_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_3 == 3",
+                                           fluidRow(withLoader(highchartOutput("BC_AB_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_3 == 4",
+                                           fluidRow(withLoader(highchartOutput("BC_AB_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_bc_3 == 5",
+                                           fluidRow(withLoader(highchartOutput("BC_AB_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       )))
+              ),
+      tabItem(tabName = "DD",
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Data Dictionary", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE, dataTableOutput("DATA_DICTIONARY_TABLE"))))
+              ),
       tabItem(tabName = "Dwn",
               fluidRow(
                 box(
@@ -856,8 +951,7 @@ ns_ind_dat <- tbl(con, config$provinces$NS$table1) %>% arrange(Date_time_local) 
 bc_ind_dat <- tbl(con, config$provinces$BC$table1) %>% arrange(Date_time_local) %>% collect()
 ab_ind_dat <- tbl(con, config$provinces$AB$table15) %>% arrange(Date_time_local) %>% collect()
 on_ind_dat <- tbl(con, config$provinces$ONT$table1) %>% arrange(date_time_local) %>% collect()
-bc_ind_dat_1 <- tbl(con, config$provinces$BC$table2) %>% collect()
-bc_ind_dat_2 <- tbl(con, config$provinces$BC$table3) %>% arrange(date_time_local) %>% collect()
+bc_ind_dat_1 <- tbl(con, config$provinces$BC$table3) %>% arrange(date_time_local) %>% collect()
 ns_ind_dat_1 <- tbl(con, config$provinces$NS$table2) %>% arrange(Date_time_local) %>% collect()
 nfl_ind_dat <- tbl(con, config$provinces$NFL$table1) %>% arrange(Date_time_local) %>% collect()
 
@@ -1369,6 +1463,134 @@ server <- function(input, output, session) {
       hc_add_series(nfl_load_subset_ts(), type = "line", name = "High Load: ", color = "green")
   })
   
+  bc_date_ind_1_1 <- reactive({paste(input$bc_dates_1[1],"00:00:00",sep = " ")})
+  bc_date_ind_1_2 <- reactive({paste(input$bc_dates_1[2],"00:00:00",sep = " ")})
+  bc_date_ind_2_1 <- reactive({paste(input$bc_dates_2[1],"00:00:00",sep = " ")})
+  bc_date_ind_2_2 <- reactive({paste(input$bc_dates_2[2],"00:00:00",sep = " ")})
+  bc_date_ind_3_1 <- reactive({paste(input$bc_dates_3[1],"00:00:00",sep = " ")})
+  bc_date_ind_3_2 <- reactive({paste(input$bc_dates_3[2],"00:00:00",sep = " ")})
+  
+  bc_load_subset_dat_1 <- reactive({subset(bc_ind_dat,subset = (bc_ind_dat$Date_time_local >= bc_date_ind_1_1() & bc_ind_dat$Date_time_local <= bc_date_ind_1_2()))})
+  bc_load_subset_dat_2 <- reactive({subset(bc_ind_dat_1,subset = (bc_ind_dat_1$Date_time_local >= bc_date_ind_2_1() & bc_ind_dat_1$Date_time_local <= bc_date_ind_2_2()))})
+  bc_load_subset_dat_3 <- reactive({subset(bc_ind_dat_1,subset = (bc_ind_dat_1$Date_time_local >= bc_date_ind_3_1() & bc_ind_dat_1$Date_time_local <= bc_date_ind_3_2()))})
+  
+  bc_load_dat_ts_1 <- reactive({xts(bc_ind_dat$Balancing_Authority_Load,bc_ind_dat$Date_time_local)})
+  bc_load_dat_ts_2 <- reactive({xts(bc_ind_dat_1$BC_US_net_actual_flow,bc_ind_dat_1$Date_time_local)})
+  bc_load_dat_ts_3 <- reactive({xts(bc_ind_dat_1$BC_AB_net_actual_flow,bc_ind_dat_1$Date_time_local)})
+  
+  bc_load_subset_ts_1 <- reactive({xts(bc_load_subset_dat_1()$Balancing_Authority_Load,bc_load_subset_dat_1()$Date_time_local)})
+  bc_load_subset_ts_2 <- reactive({xts(bc_load_subset_dat_2()$BC_US_net_actual_flow,bc_load_subset_dat_2()$Date_time_local)})
+  bc_load_subset_ts_3 <- reactive({xts(bc_load_subset_dat_3()$BC_AB_net_actual_flow,bc_load_subset_dat_3()$Date_time_local)})
+  
+  
+  bc_load_dat_ts_1_yearly <- reactive({to.yearly(bc_load_dat_ts_1())})
+  bc_load_dat_ts_1_monthly <- reactive({to.monthly(bc_load_subset_ts_1())})
+  bc_load_dat_ts_1_weekly <- reactive({to.weekly(bc_load_subset_ts_1())})
+  bc_load_dat_ts_1_daily <- reactive({to.daily(bc_load_subset_ts_1())})
+  bc_load_dat_ts_1_hourly <- reactive({to.hourly(bc_load_subset_ts_1())})
+  
+  bc_load_dat_ts_2_yearly <- reactive({to.yearly(bc_load_dat_ts_2())})
+  bc_load_dat_ts_2_monthly <- reactive({to.monthly(bc_load_subset_ts_2())})
+  bc_load_dat_ts_2_weekly <- reactive({to.weekly(bc_load_subset_ts_2())})
+  bc_load_dat_ts_2_daily <- reactive({to.daily(bc_load_subset_ts_2())})
+  bc_load_dat_ts_2_hourly <- reactive({to.hourly(bc_load_subset_ts_2())})
+  
+  bc_load_dat_ts_3_yearly <- reactive({to.yearly(bc_load_dat_ts_3())})
+  bc_load_dat_ts_3_monthly <- reactive({to.monthly(bc_load_subset_ts_3())})
+  bc_load_dat_ts_3_weekly <- reactive({to.weekly(bc_load_subset_ts_3())})
+  bc_load_dat_ts_3_daily <- reactive({to.daily(bc_load_subset_ts_3())})
+  bc_load_dat_ts_3_hourly <- reactive({to.hourly(bc_load_subset_ts_3())})
+  
+  output$BC_LOAD_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_1_yearly()[,(colnames(bc_load_dat_ts_1_yearly()) %in% c('bc_load_dat_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_1_yearly()[,(colnames(bc_load_dat_ts_1_yearly()) %in% c('bc_load_dat_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_LOAD_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_1_weekly()[,(colnames(bc_load_dat_ts_1_weekly()) %in% c('bc_load_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_1_weekly()[,(colnames(bc_load_dat_ts_1_weekly()) %in% c('bc_load_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_LOAD_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_1_daily()[,(colnames(bc_load_dat_ts_1_daily()) %in% c('bc_load_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_1_daily()[,(colnames(bc_load_dat_ts_1_daily()) %in% c('bc_load_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_LOAD_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_1_hourly()[,(colnames(bc_load_dat_ts_1_hourly()) %in% c('bc_load_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_1_hourly()[,(colnames(bc_load_dat_ts_1_hourly()) %in% c('bc_load_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_LOAD_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(bc_load_subset_ts_1(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  output$BC_US_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_2_yearly()[,(colnames(bc_load_dat_ts_2_yearly()) %in% c('bc_load_dat_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_2_yearly()[,(colnames(bc_load_dat_ts_2_yearly()) %in% c('bc_load_dat_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_US_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_2_weekly()[,(colnames(bc_load_dat_ts_2_weekly()) %in% c('bc_load_subset_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_2_weekly()[,(colnames(bc_load_dat_ts_2_weekly()) %in% c('bc_load_subset_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_US_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_2_daily()[,(colnames(bc_load_dat_ts_2_daily()) %in% c('bc_load_subset_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_2_daily()[,(colnames(bc_load_dat_ts_2_daily()) %in% c('bc_load_subset_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_US_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_2_hourly()[,(colnames(bc_load_dat_ts_2_hourly()) %in% c('bc_load_subset_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_2_hourly()[,(colnames(bc_load_dat_ts_2_hourly()) %in% c('bc_load_subset_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_US_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(bc_load_subset_ts_2(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  output$BC_AB_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_3_yearly()[,(colnames(bc_load_dat_ts_3_yearly()) %in% c('bc_load_dat_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_3_yearly()[,(colnames(bc_load_dat_ts_3_yearly()) %in% c('bc_load_dat_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_AB_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_3_weekly()[,(colnames(bc_load_dat_ts_3_weekly()) %in% c('bc_load_subset_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_3_weekly()[,(colnames(bc_load_dat_ts_3_weekly()) %in% c('bc_load_subset_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_AB_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_3_daily()[,(colnames(bc_load_dat_ts_3_daily()) %in% c('bc_load_subset_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_3_daily()[,(colnames(bc_load_dat_ts_3_daily()) %in% c('bc_load_subset_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_AB_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(bc_load_dat_ts_3_hourly()[,(colnames(bc_load_dat_ts_3_hourly()) %in% c('bc_load_subset_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(bc_load_dat_ts_3_hourly()[,(colnames(bc_load_dat_ts_3_hourly()) %in% c('bc_load_subset_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$BC_AB_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(bc_load_subset_ts_3(), type = "line", name = "High Load: ", color = "green")
+  })
+  
   ns_date_ind_1_1 <- reactive({paste(input$ns_dates_1[1],"00:00:00",sep = " ")})
   ns_date_ind_1_2 <- reactive({paste(input$ns_dates_1[2],"00:00:00",sep = " ")})
   ns_load_subset_dat <- reactive({subset(ns_ind_dat,subset = (ns_ind_dat$Date_time_local >= ns_date_ind_1_1() & ns_ind_dat$Date_time_local <= ns_date_ind_1_2()))})
@@ -1866,6 +2088,10 @@ server <- function(input, output, session) {
       hc_add_series(on_tot_demand_subset_ts(), type = "line", name = "High Load: ", color = "green")
   })
   
+  data_dict <- read_xlsx("www/data_dictionay.xlsx", sheet = "Variables definitions")
+  data_dict_df <- as.data.frame(data_dict)
+  output$DATA_DICTIONARY_TABLE <- renderDataTable({data_dict_df})
+  
   
   
   #Individual Province Visualization
@@ -2035,6 +2261,27 @@ server <- function(input, output, session) {
                         min = as.Date(head(nfl_ind_dat$Date_time_local,1),"%Y-%m-%d"),
                         max = as.Date(tail(nfl_ind_dat$Date_time_local,1),"%Y-%m-%d"),
                         value=c(as.Date(nfl_dd_1_1),nfl_dd_2_2),
+                        timeFormat="%Y-%m-%d")
+    }
+    if(input$rted_menu == "BC"){
+      bc_dd_1 <- as.Date(Sys.Date())-(7)
+      bc_dd_1_1 <- paste(bc_dd_1,"00:00:00",sep=" ")
+      bc_dd_2_2 <- as.Date(tail(bc_ind_dat$Date_time_local,1))
+      bc_dd_3_2 <- as.Date(tail(bc_ind_dat_1$Date_time_local,1))
+      updateSliderInput(session, "bc_dates_1",
+                        min = as.Date(head(bc_ind_dat$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(bc_ind_dat$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(bc_dd_1_1),bc_dd_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "bc_dates_2",
+                        min = as.Date(head(bc_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(bc_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(bc_dd_1_1),bc_dd_3_2),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "bc_dates_3",
+                        min = as.Date(head(bc_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(bc_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(bc_dd_1_1),bc_dd_3_2),
                         timeFormat="%Y-%m-%d")
     }
     if(input$rted_menu == "ON"){

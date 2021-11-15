@@ -10,11 +10,17 @@ library(shinycustomloader)
 library(config)
 library(shinyBS)
 library(shi18ny)
+library(readxl)
 
+ddf <- addResourcePath("data_dictionay.xlsx","www/")
+data_dict <- read_xlsx("www/data_dictionay.xlsx", sheet = "Variables definitions")
+data_dict_df <- as.data.frame(data_dict)
 
 config <- config::get()
 
 config$provinces$PEI$table1
+
+read_excel("")
 
 
 server <- "ccei.database.windows.net"
