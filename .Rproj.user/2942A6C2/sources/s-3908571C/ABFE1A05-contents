@@ -18,16 +18,30 @@ library(shinyjs)
 library(shinycustomloader)
 library(shinyBS)
 library(config)
-library(shi18ny)
 library(readxl)
+library(RODBC)
+
+if_local <- Sys.getenv('SHINY_PORT')==""
+
+if(if_local){
+  Sys.setenv(R_CONFIG_ACTIVE = "local")
+}
+if(!if_local){
+  Sys.setenv(R_CONFIG_ACTIVE = "shinyapps")
+}
 
 config <- config::get()
 con <- DBI::dbConnect(odbc::odbc(), 
                       UID = config$username,
+                      TDS_Version = config$TDS_version,
+                      Port = config$Port,
+                      Encrypt = config$encrypt,
+                      TrustServerCertificate = config$TSC,
                       Driver=config$driver,
                       Server = config$server, Database = config$database,
                       Authentication = config$auth,
-                      timeout = 10)
+                      timeoutSecs = 30)
+
 
 dashboard_ui_slider_date_end <- Sys.Date()
 dashboard_ui_slider_date_start <- paste(Sys.Date()-7,"00:00:00",sep=" ")
@@ -2088,7 +2102,7 @@ server <- function(input, output, session) {
       hc_add_series(on_tot_demand_subset_ts(), type = "line", name = "High Load: ", color = "green")
   })
   
-  data_dict <- read_xlsx("www/data_dictionay.xlsx", sheet = "Variables definitions")
+  data_dict <- read_xlsx("www/data_dictionay.xlsx", sheet = config$dd_sheet)
   data_dict_df <- as.data.frame(data_dict)
   output$DATA_DICTIONARY_TABLE <- renderDataTable({data_dict_df})
   
