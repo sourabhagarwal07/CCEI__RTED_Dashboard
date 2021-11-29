@@ -11,6 +11,9 @@ library(config)
 library(shinyBS)
 library(shi18ny)
 library(readxl)
+library(httr)
+
+a <- GET
 
 ddf <- addResourcePath("data_dictionay.xlsx","www/")
 data_dict <- read_xlsx("www/data_dictionay.xlsx", sheet = "Variables definitions")

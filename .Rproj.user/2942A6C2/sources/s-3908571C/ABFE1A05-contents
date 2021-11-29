@@ -21,36 +21,14 @@ library(config)
 library(readxl)
 library(RODBC)
 
-if_local <- Sys.getenv('SHINY_PORT')==""
-
-if(if_local){
-  Sys.setenv(R_CONFIG_ACTIVE = "local")
-}
-if(!if_local){
-  Sys.setenv(R_CONFIG_ACTIVE = "shinyapps")
-}
-
-config <- config::get()
-con <- DBI::dbConnect(odbc::odbc(), 
-                      UID = config$username,
-                      TDS_Version = config$TDS_version,
-                      Port = config$Port,
-                      Encrypt = config$encrypt,
-                      TrustServerCertificate = config$TSC,
-                      Driver=config$driver,
-                      Server = config$server, Database = config$database,
-                      Authentication = config$auth,
-                      timeoutSecs = 30)
-
 
 dashboard_ui_slider_date_end <- Sys.Date()
 dashboard_ui_slider_date_start <- paste(Sys.Date()-7,"00:00:00",sep=" ")
 
 
-
 # Define UI for application that draws a histogram
 ui <- dashboardPage(
-  dashboardHeader(title = "CCEI-RTED DashBoard",dropdownMenu()),
+  dashboardHeader(title = "CCEI-RTED DashBoard",dropdownMenu(type = "messages", icon = icon("cog"), headerText = NULL, badgeStatus = NULL)),
   dashboardSidebar(
     sidebarMenu( id = "rted_menu",
                  menuItem("Dashboard", tabName = "dashboard", icon = icon("chart-line")),
@@ -120,6 +98,14 @@ margin-top: 15px;
 margin-bottom : -15px;
 }
 
+#dash_title{
+margin-left: 10px;
+}
+
+#hlp_txt_dwn{
+margin-left: 5px;
+}
+
 
                                     ")),
     tabItems(
@@ -134,20 +120,24 @@ margin-bottom : -15px;
               ),
               fluidRow(
                 box(
-                  title = "Prince Edward Island",width = 4, status = "success", solidHeader = TRUE,
+                  title = fluidRow(id = "dash_title",
+                    fluidRow(column(width = 8, h4("Prince Edward Island")),column(width = 4, h4("Counter1")))),
+                  width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("PEI_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_pei","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)
                 ),
                 box(
-                  title = "Nova Scotia",width = 4, status = "success", solidHeader = TRUE,
+                  title = fluidRow(id = "dash_title",
+                  fluidRow(column(width = 8, h4("Nova Scotia")),column(width = 4, h4("Counter2")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("NS_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_NS","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
-                  title = "New Brunswick",width = 4, status = "success", solidHeader = TRUE,
+                  title = fluidRow(id = "dash_title",
+                  fluidRow(column(width = 8, h4("New Brunswick")),column(width = 4, h4("Counter3")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("NB_load"), type = "html", loader = "loader3")),
@@ -155,19 +145,22 @@ margin-bottom : -15px;
               ),
               fluidRow(
                 box(
-                  title = "Ontario",width = 4, status = "success", solidHeader = TRUE,
+                  title = fluidRow(id = "dash_title",
+                  fluidRow(column(width = 8, h4("Ontario")),column(width = 4, h4("Counter4")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("ON_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_ON","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
-                  title = "Alberta",width = 4, status = "success", solidHeader = TRUE,
+                  title = fluidRow(id = "dash_title",
+                  fluidRow(column(width = 8, h4("Alberta")),column(width = 4, h4("Counter5")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("AB_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_AB","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
-                  title = "British Coloumbia",width = 4, status = "success", solidHeader = TRUE,
+                  title = fluidRow(id = "dash_title",
+                  fluidRow(column(width = 8, h4("British Coloumbia")),column(width = 4, h4("Counter6")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("BC_load"), type = "html", loader = "loader3")),
@@ -175,13 +168,15 @@ margin-bottom : -15px;
               ),
               fluidRow(
                 box(
-                  title = "Newfoundland & Labrador",width = 4, status = "success", solidHeader = TRUE,
+                  title = fluidRow(id = "dash_title",
+                  fluidRow(column(width = 8, h4("Newfoundland & Labrador")),column(width = 4, h4("Counter7")))),width = 6, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("NFL_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_NFL","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
-                  title = "Quebec",width = 4, status = "success", solidHeader = TRUE,
+                  title = fluidRow(id = "dash_title",
+                  fluidRow(column(width = 8, h4("Quebec")),column(width = 4, h4("Counter8")))),width = 6, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("QB_load"), type = "html", loader = "loader3")),
@@ -721,7 +716,66 @@ margin-bottom : -15px;
                          )
                        )))
               ),
-      tabItem(tabName = "QB",h2("hello world")),
+      tabItem(tabName = "QB",
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Total Production", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_1", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_1 != 1",sliderInput("qb_dates_1",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_1 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_TOT_PRODUCTION_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_1 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_TOT_PRODUCTION_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_1 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_TOT_PRODUCTION_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_1 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_TOT_PRODUCTION_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_1 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_TOT_PRODUCTION_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Hydraulic", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_2", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_2 != 1",sliderInput("qb_dates_2",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_2 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_1_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_2 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_1_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_2 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_1_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_2 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_1_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_2 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_1_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              ),
       tabItem(tabName = "AB",h2("hello world")),
       tabItem(tabName = "BC",
               fluidRow(
@@ -837,7 +891,7 @@ margin-bottom : -15px;
                                            helpText("Note: Please Select a File to Download"))
                   )),
                   fluidRow(id = "dwn1", column(bsAlert("NB_1"), width = 12)),
-                  fluidRow(helpText("Note: Please apply filter before downloading data (Eg. for default dates press apply, for selected dates, select dates and press apply."))
+                  fluidRow(id = "hlp_txt_dwn",helpText("Note: Please apply filter before downloading data (Eg. for default dates press apply, for selected dates, select dates and press apply."))
                 ),
                 box(
                   title = "NovaScotia",status = "success", solidHeader = TRUE,collapsible = TRUE,
@@ -931,48 +985,75 @@ margin-bottom : -15px;
 
 #bussines logic
 
-Previous_date <- as.Date(Sys.Date())-(5*365)
-previous_time <- paste(Previous_date,"00:00:00",sep=" ")
 
-Previous_date_1 <- as.Date(Sys.Date())-(1)
-previous_time_1 <- paste(Previous_date_1,"00:00:00",sep=" ")
-
-
-
-abload_data <- tbl(con, config$provinces$AB$table15) %>% arrange(Date_time_local) %>% collect()
-abload_date <- as.Date(tail(abload_data$Date_time_local,1))
-abload_subset <- subset(abload_data,subset = Date_time_local >= (abload_date - 1) & Date_time_local <= abload_date)
-ab_load_ts_1 <-  xts(abload_subset$Calgary,abload_subset$Date_time_local)
-ab_load_ts_2 <-  xts(abload_subset$Central,abload_subset$Date_time_local)
-ab_load_ts_3 <-  xts(abload_subset$Edmonton,abload_subset$Date_time_local)
-ab_load_ts_4 <-  xts(abload_subset$Northeast,abload_subset$Date_time_local)
-ab_load_ts_5 <-  xts(abload_subset$Northwest,abload_subset$Date_time_local)
-ab_load_ts_6 <-  xts(abload_subset$South,abload_subset$Date_time_local)
-
-ab_load_chart <- highchart() %>% 
-  hc_xAxis(type = "datetime") %>%
-  hc_add_series(ab_load_ts_1, name="Calgary Load", type = "line")%>%
-  hc_add_series(ab_load_ts_2, name="Central Load", type = "line",color = "red")%>%
-  hc_add_series(ab_load_ts_3, name="Edmonton Load", type = "line",color = "lightgreen")%>%
-  hc_add_series(ab_load_ts_4, name="Northeast Load", type = "line",color = "purple")%>%
-  hc_add_series(ab_load_ts_5, name="Northwest Load", type = "line",color = "orange")%>%
-  hc_add_series(ab_load_ts_6, name="South Load", type = "line",color = "brown")%>%
-  hc_navigator(enabled = TRUE)
-
-pei_ind_dat <- tbl(con, config$provinces$PEI$table1) %>% arrange(Date_time_local) %>% collect()
-nb_ind_dat <- tbl(con, config$provinces$NB$table1) %>% arrange(Date_time_local) %>% collect()
-ns_ind_dat <- tbl(con, config$provinces$NS$table1) %>% arrange(Date_time_local) %>% collect()
-bc_ind_dat <- tbl(con, config$provinces$BC$table1) %>% arrange(Date_time_local) %>% collect()
-ab_ind_dat <- tbl(con, config$provinces$AB$table15) %>% arrange(Date_time_local) %>% collect()
-on_ind_dat <- tbl(con, config$provinces$ONT$table1) %>% arrange(date_time_local) %>% collect()
-bc_ind_dat_1 <- tbl(con, config$provinces$BC$table3) %>% arrange(date_time_local) %>% collect()
-ns_ind_dat_1 <- tbl(con, config$provinces$NS$table2) %>% arrange(Date_time_local) %>% collect()
-nfl_ind_dat <- tbl(con, config$provinces$NFL$table1) %>% arrange(Date_time_local) %>% collect()
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
   
+  if_local <- Sys.getenv('SHINY_PORT')==""
   
+  if(if_local){
+    Sys.setenv(R_CONFIG_ACTIVE = "local")
+  }
+  if(!if_local){
+    Sys.setenv(R_CONFIG_ACTIVE = "shinyapps")
+  }
+  
+  config <- config::get()
+  con <- DBI::dbConnect(odbc::odbc(), 
+                        UID = config$username,
+                        TDS_Version = config$TDS_version,
+                        Port = config$Port,
+                        Encrypt = config$encrypt,
+                        TrustServerCertificate = config$TSC,
+                        Driver=config$driver,
+                        Server = config$server, Database = config$database,
+                        Authentication = config$auth,
+                        timeoutSecs = 30)
+  
+  
+  
+  
+  Previous_date <- as.Date(Sys.Date())-(5*365)
+  previous_time <- paste(Previous_date,"00:00:00",sep=" ")
+  
+  Previous_date_1 <- as.Date(Sys.Date())-(1)
+  previous_time_1 <- paste(Previous_date_1,"00:00:00",sep=" ")
+  
+  
+  
+  abload_data <- tbl(con, config$provinces$AB$table15) %>% arrange(Date_time_local) %>% collect()
+  abload_date <- as.Date(tail(abload_data$Date_time_local,1))
+  abload_subset <- subset(abload_data,subset = Date_time_local >= (abload_date - 1) & Date_time_local <= abload_date)
+  ab_load_ts_1 <-  xts(abload_subset$Calgary,abload_subset$Date_time_local)
+  ab_load_ts_2 <-  xts(abload_subset$Central,abload_subset$Date_time_local)
+  ab_load_ts_3 <-  xts(abload_subset$Edmonton,abload_subset$Date_time_local)
+  ab_load_ts_4 <-  xts(abload_subset$Northeast,abload_subset$Date_time_local)
+  ab_load_ts_5 <-  xts(abload_subset$Northwest,abload_subset$Date_time_local)
+  ab_load_ts_6 <-  xts(abload_subset$South,abload_subset$Date_time_local)
+  
+  ab_load_chart <- highchart() %>% 
+    hc_xAxis(type = "datetime") %>%
+    hc_add_series(ab_load_ts_1, name="Calgary Load", type = "line")%>%
+    hc_add_series(ab_load_ts_2, name="Central Load", type = "line",color = "red")%>%
+    hc_add_series(ab_load_ts_3, name="Edmonton Load", type = "line",color = "lightgreen")%>%
+    hc_add_series(ab_load_ts_4, name="Northeast Load", type = "line",color = "purple")%>%
+    hc_add_series(ab_load_ts_5, name="Northwest Load", type = "line",color = "orange")%>%
+    hc_add_series(ab_load_ts_6, name="South Load", type = "line",color = "brown")%>%
+    hc_navigator(enabled = TRUE)
+  
+  pei_ind_dat <- tbl(con, config$provinces$PEI$table1) %>% arrange(Date_time_local) %>% collect()
+  nb_ind_dat <- tbl(con, config$provinces$NB$table1) %>% arrange(Date_time_local) %>% collect()
+  ns_ind_dat <- tbl(con, config$provinces$NS$table1) %>% arrange(Date_time_local) %>% collect()
+  bc_ind_dat <- tbl(con, config$provinces$BC$table1) %>% arrange(Date_time_local) %>% collect()
+  ab_ind_dat <- tbl(con, config$provinces$AB$table15) %>% arrange(Date_time_local) %>% collect()
+  on_ind_dat <- tbl(con, config$provinces$ONT$table1) %>% arrange(date_time_local) %>% collect()
+  bc_ind_dat_1 <- tbl(con, config$provinces$BC$table3) %>% arrange(date_time_local) %>% collect()
+  ns_ind_dat_1 <- tbl(con, config$provinces$NS$table2) %>% arrange(Date_time_local) %>% collect()
+  nfl_ind_dat <- tbl(con, config$provinces$NFL$table1) %>% arrange(Date_time_local) %>% collect()
+  qb_ind_dat_1 <- tbl(con, config$provinces$QUEBEC$table2) %>% arrange(Date_time_local) %>% collect()
+  qb_ind_dat_2 <- tbl(con, config$provinces$QUEBEC$table1) %>% arrange(Date_time_local) %>% collect()
+  qb_ind_dat_3 <- tbl(con, config$provinces$QUEBEC$table3) %>% arrange(Date_time_local) %>% collect()
   
   output$timer <- renderText({invalidateLater(1000, session)
     paste("",Sys.time())})
@@ -2102,6 +2183,95 @@ server <- function(input, output, session) {
       hc_add_series(on_tot_demand_subset_ts(), type = "line", name = "High Load: ", color = "green")
   })
   
+  qb_date_ind_1_1 <- reactive({paste(input$qb_dates_1[1],"00:00:00",sep = " ")})
+  qb_date_ind_1_2 <- reactive({paste(input$qb_dates_1[2],"00:00:00",sep = " ")})
+  
+  qb_data_energy_subset_dat <- reactive({subset(qb_ind_dat_1,subset = (qb_ind_dat_1$Date_time_local >= qb_date_ind_1_1() & qb_ind_dat_1$Date_time_local <= qb_date_ind_1_2()))})
+  
+  qb_data_energy_dat_ts <- reactive({xts(qb_ind_dat_1$total_production,qb_ind_dat_1$Date_time_local)})
+  qb_data_energy_subset_ts <- reactive({xts(qb_data_energy_subset_dat()$total_production,qb_data_energy_subset_dat()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly <- reactive({to.yearly(qb_data_energy_dat_ts())})
+  qb_data_energy_dat_ts_monthly <- reactive({to.monthly(qb_data_energy_subset_ts())})
+  qb_data_energy_dat_ts_weekly <- reactive({to.weekly(qb_data_energy_subset_ts())})
+  qb_data_energy_dat_ts_daily <- reactive({to.daily(qb_data_energy_subset_ts())})
+  qb_data_energy_dat_ts_hourly <- reactive({to.hourly(qb_data_energy_subset_ts())})
+  
+  output$QB_TOT_PRODUCTION_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly()[,(colnames(qb_data_energy_dat_ts_yearly()) %in% c('qb_data_energy_dat_ts().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly()[,(colnames(qb_data_energy_dat_ts_yearly()) %in% c('qb_data_energy_dat_ts().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_TOT_PRODUCTION_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly()[,(colnames(qb_data_energy_dat_ts_weekly()) %in% c('qb_data_energy_subset_ts().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly()[,(colnames(qb_data_energy_dat_ts_weekly()) %in% c('qb_data_energy_subset_ts().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_TOT_PRODUCTION_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily()[,(colnames(qb_data_energy_dat_ts_daily()) %in% c('qb_data_energy_subset_ts().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily()[,(colnames(qb_data_energy_dat_ts_daily()) %in% c('qb_data_energy_subset_ts().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_TOT_PRODUCTION_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly()[,(colnames(qb_data_energy_dat_ts_hourly()) %in% c('qb_data_energy_subset_ts().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly()[,(colnames(qb_data_energy_dat_ts_hourly()) %in% c('qb_data_energy_subset_ts().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_TOT_PRODUCTION_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  
+  qb_date_ind_2_1 <- reactive({paste(input$qb_dates_2[1],"00:00:00",sep = " ")})
+  qb_date_ind_2_2 <- reactive({paste(input$qb_dates_2[2],"00:00:00",sep = " ")})
+  
+  qb_data_energy_subset_dat_1 <- reactive({subset(qb_ind_dat_1,subset = (qb_ind_dat_1$Date_time_local >= qb_date_ind_2_1() & qb_ind_dat_1$Date_time_local <= qb_date_ind_2_2()))})
+  
+  qb_data_energy_dat_ts_1 <- reactive({xts(qb_ind_dat_1$hydraulic,qb_ind_dat_1$Date_time_local)})
+  qb_data_energy_subset_ts_1 <- reactive({xts(qb_data_energy_subset_dat_1()$hydraulic,qb_data_energy_subset_dat_1()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly_1 <- reactive({to.yearly(qb_data_energy_dat_ts_1())})
+  qb_data_energy_dat_ts_monthly_1 <- reactive({to.monthly(qb_data_energy_subset_ts_1())})
+  qb_data_energy_dat_ts_weekly_1 <- reactive({to.weekly(qb_data_energy_subset_ts_1())})
+  qb_data_energy_dat_ts_daily_1 <- reactive({to.daily(qb_data_energy_subset_ts_1())})
+  qb_data_energy_dat_ts_hourly_1 <- reactive({to.hourly(qb_data_energy_subset_ts_1())})
+  
+  output$QB_FUEL_1_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_1()[,(colnames(qb_data_energy_dat_ts_yearly_1()) %in% c('qb_data_energy_dat_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_1()[,(colnames(qb_data_energy_dat_ts_yearly_1()) %in% c('qb_data_energy_dat_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_1_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_1()[,(colnames(qb_data_energy_dat_ts_weekly_1()) %in% c('qb_data_energy_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_1()[,(colnames(qb_data_energy_dat_ts_weekly_1()) %in% c('qb_data_energy_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_1_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily()[,(colnames(qb_data_energy_dat_ts_daily_1()) %in% c('qb_data_energy_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily()[,(colnames(qb_data_energy_dat_ts_daily_1()) %in% c('qb_data_energy_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_1_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly()[,(colnames(qb_data_energy_dat_ts_hourly_1()) %in% c('qb_data_energy_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly()[,(colnames(qb_data_energy_dat_ts_hourly_1()) %in% c('qb_data_energy_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_1_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_1(), type = "line", name = "High Load: ", color = "green")
+  })
+  
   data_dict <- read_xlsx("www/data_dictionay.xlsx", sheet = config$dd_sheet)
   data_dict_df <- as.data.frame(data_dict)
   output$DATA_DICTIONARY_TABLE <- renderDataTable({data_dict_df})
@@ -2275,6 +2445,21 @@ server <- function(input, output, session) {
                         min = as.Date(head(nfl_ind_dat$Date_time_local,1),"%Y-%m-%d"),
                         max = as.Date(tail(nfl_ind_dat$Date_time_local,1),"%Y-%m-%d"),
                         value=c(as.Date(nfl_dd_1_1),nfl_dd_2_2),
+                        timeFormat="%Y-%m-%d")
+    }
+    if(input$rted_menu == "QB"){
+      qb_dd_1 <- as.Date(Sys.Date())-(7)
+      qb_dd_1_1 <- paste(qb_dd_1,"00:00:00",sep=" ")
+      qb_dd_2_2 <- as.Date(tail(qb_ind_dat_1$Date_time_local,1))
+      updateSliderInput(session, "qb_dates_1",
+                        min = as.Date(head(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_1_1),qb_dd_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_2",
+                        min = as.Date(head(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_1_1),qb_dd_2_2),
                         timeFormat="%Y-%m-%d")
     }
     if(input$rted_menu == "BC"){
