@@ -749,7 +749,7 @@ margin-left: 5px;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "Hydraulic", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Fuel Type - I", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
                          fluidRow(column(width = 2, selectInput("select_fr_qb_2", h4("Select Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
@@ -775,6 +775,297 @@ margin-left: 5px;
                            column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
                          )
                        ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Fuel Type - II", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_3", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_3 != 1",sliderInput("qb_dates_3",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_3 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_2_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_3 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_2_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_3 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_2_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_3 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_2_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_3 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_2_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Fuel Type - III", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_4", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_4 != 1",sliderInput("qb_dates_4",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_4 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_3_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_4 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_3_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_4 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_3_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_4 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_3_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_4 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_FUEL_3_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Electricity Statistics - I", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_5", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_5 != 1",sliderInput("qb_dates_5",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_5 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_1_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_5 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_1_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_5 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_1_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_5 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_1_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_5 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_1_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Electricity Statistics - II", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_6", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_6 != 1",sliderInput("qb_dates_6",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_6 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_2_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_6 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_2_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_6 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_2_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_6 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_2_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_6 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_2_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Electricity Statistics - III", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_7", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_7 != 1",sliderInput("qb_dates_7",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_7 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_3_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_7 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_3_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_7 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_3_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_7 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_3_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_7 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_3_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Electricity Statistics - IV", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_8", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_8 != 1",sliderInput("qb_dates_8",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_8 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_4_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_8 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_4_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_8 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_4_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_8 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_4_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_8 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_4_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Electricity Statistics - V", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_9", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_9 != 1",sliderInput("qb_dates_9",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_9 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_5_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_9 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_5_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_9 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_5_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_9 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_5_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_9 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_5_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Electricity Statistics - VI", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_10", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_10 != 1",sliderInput("qb_dates_10",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_10 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_6_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_10 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_6_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_10 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_6_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_10 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_6_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_10 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_6_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Electricity Statistics - VII", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_11", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_11 != 1",sliderInput("qb_dates_11",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_11 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_7_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_11 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_7_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_11 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_7_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_11 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_7_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_11 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_7_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Electricity Statistics - VIII", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_12", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_12 != 1",sliderInput("qb_dates_12",
+                                                                                                                                        "Dates",
+                                                                                                                                        min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                        max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                        value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                        timeFormat="%Y-%m-%d")))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_qb_12 == 1",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_8_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_12 == 6",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_8_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_12 == 3",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_8_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_12 == 4",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_8_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_qb_12 == 5",
+                                           fluidRow(withLoader(highchartOutput("QB_ENE_8_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              
               ),
       tabItem(tabName = "AB",h2("hello world")),
       tabItem(tabName = "BC",
@@ -2232,9 +2523,13 @@ server <- function(input, output, session) {
   qb_date_ind_2_2 <- reactive({paste(input$qb_dates_2[2],"00:00:00",sep = " ")})
   
   qb_data_energy_subset_dat_1 <- reactive({subset(qb_ind_dat_1,subset = (qb_ind_dat_1$Date_time_local >= qb_date_ind_2_1() & qb_ind_dat_1$Date_time_local <= qb_date_ind_2_2()))})
+  qb_data_energy_subset_dat_2 <- reactive({subset(qb_ind_dat_1,subset = (qb_ind_dat_1$Date_time_local >= qb_date_ind_2_1() & qb_ind_dat_1$Date_time_local <= qb_date_ind_2_2()))})
   
   qb_data_energy_dat_ts_1 <- reactive({xts(qb_ind_dat_1$hydraulic,qb_ind_dat_1$Date_time_local)})
   qb_data_energy_subset_ts_1 <- reactive({xts(qb_data_energy_subset_dat_1()$hydraulic,qb_data_energy_subset_dat_1()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_2 <- reactive({xts(qb_ind_dat_1$other,qb_ind_dat_1$Date_time_local)})
+  qb_data_energy_subset_ts_2 <- reactive({xts(qb_data_energy_subset_dat_2()$other,qb_data_energy_subset_dat_2()$Date_time_local)})
   
   qb_data_energy_dat_ts_yearly_1 <- reactive({to.yearly(qb_data_energy_dat_ts_1())})
   qb_data_energy_dat_ts_monthly_1 <- reactive({to.monthly(qb_data_energy_subset_ts_1())})
@@ -2242,35 +2537,659 @@ server <- function(input, output, session) {
   qb_data_energy_dat_ts_daily_1 <- reactive({to.daily(qb_data_energy_subset_ts_1())})
   qb_data_energy_dat_ts_hourly_1 <- reactive({to.hourly(qb_data_energy_subset_ts_1())})
   
+  qb_data_energy_dat_ts_yearly_2 <- reactive({to.yearly(qb_data_energy_dat_ts_2())})
+  qb_data_energy_dat_ts_monthly_2 <- reactive({to.monthly(qb_data_energy_subset_ts_2())})
+  qb_data_energy_dat_ts_weekly_2 <- reactive({to.weekly(qb_data_energy_subset_ts_2())})
+  qb_data_energy_dat_ts_daily_2 <- reactive({to.daily(qb_data_energy_subset_ts_2())})
+  qb_data_energy_dat_ts_hourly_2 <- reactive({to.hourly(qb_data_energy_subset_ts_2())})
+  
   output$QB_FUEL_1_YEARLY <- renderHighchart({
     highchart() %>% 
       hc_xAxis(type = "datetime") %>% 
       hc_add_series(qb_data_energy_dat_ts_yearly_1()[,(colnames(qb_data_energy_dat_ts_yearly_1()) %in% c('qb_data_energy_dat_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
       hc_add_series(qb_data_energy_dat_ts_yearly_1()[,(colnames(qb_data_energy_dat_ts_yearly_1()) %in% c('qb_data_energy_dat_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_2()[,(colnames(qb_data_energy_dat_ts_yearly_2()) %in% c('qb_data_energy_dat_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_2()[,(colnames(qb_data_energy_dat_ts_yearly_2()) %in% c('qb_data_energy_dat_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
       hc_navigator(enabled = TRUE)})
   output$QB_FUEL_1_WEEKLY <- renderHighchart({
     highchart() %>% 
       hc_xAxis(type = "datetime") %>% 
       hc_add_series(qb_data_energy_dat_ts_weekly_1()[,(colnames(qb_data_energy_dat_ts_weekly_1()) %in% c('qb_data_energy_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
       hc_add_series(qb_data_energy_dat_ts_weekly_1()[,(colnames(qb_data_energy_dat_ts_weekly_1()) %in% c('qb_data_energy_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_2()[,(colnames(qb_data_energy_dat_ts_weekly_2()) %in% c('qb_data_energy_subset_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_2()[,(colnames(qb_data_energy_dat_ts_weekly_2()) %in% c('qb_data_energy_subset_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
       hc_navigator(enabled = TRUE)})
   output$QB_FUEL_1_DAILY <- renderHighchart({
     highchart() %>% 
       hc_xAxis(type = "datetime") %>% 
-      hc_add_series(qb_data_energy_dat_ts_daily()[,(colnames(qb_data_energy_dat_ts_daily_1()) %in% c('qb_data_energy_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
-      hc_add_series(qb_data_energy_dat_ts_daily()[,(colnames(qb_data_energy_dat_ts_daily_1()) %in% c('qb_data_energy_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_1()[,(colnames(qb_data_energy_dat_ts_daily_1()) %in% c('qb_data_energy_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_1()[,(colnames(qb_data_energy_dat_ts_daily_1()) %in% c('qb_data_energy_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_2()[,(colnames(qb_data_energy_dat_ts_daily_2()) %in% c('qb_data_energy_subset_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_2()[,(colnames(qb_data_energy_dat_ts_daily_2()) %in% c('qb_data_energy_subset_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
       hc_navigator(enabled = TRUE)})
   output$QB_FUEL_1_HOURLY <- renderHighchart({
     highchart() %>% 
       hc_xAxis(type = "datetime") %>% 
-      hc_add_series(qb_data_energy_dat_ts_hourly()[,(colnames(qb_data_energy_dat_ts_hourly_1()) %in% c('qb_data_energy_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
-      hc_add_series(qb_data_energy_dat_ts_hourly()[,(colnames(qb_data_energy_dat_ts_hourly_1()) %in% c('qb_data_energy_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_1()[,(colnames(qb_data_energy_dat_ts_hourly_1()) %in% c('qb_data_energy_subset_ts_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_1()[,(colnames(qb_data_energy_dat_ts_hourly_1()) %in% c('qb_data_energy_subset_ts_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_2()[,(colnames(qb_data_energy_dat_ts_hourly_2()) %in% c('qb_data_energy_subset_ts_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_2()[,(colnames(qb_data_energy_dat_ts_hourly_2()) %in% c('qb_data_energy_subset_ts_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
       hc_navigator(enabled = TRUE)})
   output$QB_FUEL_1_ALL <- renderHighchart({
     highchart() %>% 
       hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
-      hc_add_series(qb_data_energy_subset_ts_1(), type = "line", name = "High Load: ", color = "green")
+      hc_add_series(qb_data_energy_subset_ts_1(), type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_subset_ts_2(), type = "line", name = "High Load: ", color = "green")
   })
+  
+  qb_date_ind_3_1 <- reactive({paste(input$qb_dates_3[1],"00:00:00",sep = " ")})
+  qb_date_ind_3_2 <- reactive({paste(input$qb_dates_3[2],"00:00:00",sep = " ")})
+  
+  qb_data_energy_subset_dat_3 <- reactive({subset(qb_ind_dat_1,subset = (qb_ind_dat_1$Date_time_local >= qb_date_ind_3_1() & qb_ind_dat_1$Date_time_local <= qb_date_ind_3_2()))})
+  qb_data_energy_subset_dat_4 <- reactive({subset(qb_ind_dat_1,subset = (qb_ind_dat_1$Date_time_local >= qb_date_ind_3_1() & qb_ind_dat_1$Date_time_local <= qb_date_ind_3_2()))})
+  
+  qb_data_energy_dat_ts_3 <- reactive({xts(qb_ind_dat_1$wind,qb_ind_dat_1$Date_time_local)})
+  qb_data_energy_subset_ts_3 <- reactive({xts(qb_data_energy_subset_dat_3()$wind,qb_data_energy_subset_dat_3()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_4 <- reactive({xts(qb_ind_dat_1$solar,qb_ind_dat_1$Date_time_local)})
+  qb_data_energy_subset_ts_4 <- reactive({xts(qb_data_energy_subset_dat_4()$solar,qb_data_energy_subset_dat_4()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly_3 <- reactive({to.yearly(qb_data_energy_dat_ts_3())})
+  qb_data_energy_dat_ts_monthly_3 <- reactive({to.monthly(qb_data_energy_subset_ts_3())})
+  qb_data_energy_dat_ts_weekly_3 <- reactive({to.weekly(qb_data_energy_subset_ts_3())})
+  qb_data_energy_dat_ts_daily_3 <- reactive({to.daily(qb_data_energy_subset_ts_3())})
+  qb_data_energy_dat_ts_hourly_3 <- reactive({to.hourly(qb_data_energy_subset_ts_3())})
+  
+  qb_data_energy_dat_ts_yearly_4 <- reactive({to.yearly(qb_data_energy_dat_ts_4())})
+  qb_data_energy_dat_ts_monthly_4 <- reactive({to.monthly(qb_data_energy_subset_ts_4())})
+  qb_data_energy_dat_ts_weekly_4 <- reactive({to.weekly(qb_data_energy_subset_ts_4())})
+  qb_data_energy_dat_ts_daily_4 <- reactive({to.daily(qb_data_energy_subset_ts_4())})
+  qb_data_energy_dat_ts_hourly_4 <- reactive({to.hourly(qb_data_energy_subset_ts_4())})
+  
+  output$QB_FUEL_2_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_3()[,(colnames(qb_data_energy_dat_ts_yearly_3()) %in% c('qb_data_energy_dat_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_3()[,(colnames(qb_data_energy_dat_ts_yearly_3()) %in% c('qb_data_energy_dat_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_4()[,(colnames(qb_data_energy_dat_ts_yearly_4()) %in% c('qb_data_energy_dat_ts_4().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_4()[,(colnames(qb_data_energy_dat_ts_yearly_4()) %in% c('qb_data_energy_dat_ts_4().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_2_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_3()[,(colnames(qb_data_energy_dat_ts_weekly_3()) %in% c('qb_data_energy_subset_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_3()[,(colnames(qb_data_energy_dat_ts_weekly_3()) %in% c('qb_data_energy_subset_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_4()[,(colnames(qb_data_energy_dat_ts_weekly_4()) %in% c('qb_data_energy_subset_ts_4().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_4()[,(colnames(qb_data_energy_dat_ts_weekly_4()) %in% c('qb_data_energy_subset_ts_4().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_2_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_3()[,(colnames(qb_data_energy_dat_ts_daily_3()) %in% c('qb_data_energy_subset_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_3()[,(colnames(qb_data_energy_dat_ts_daily_3()) %in% c('qb_data_energy_subset_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_4()[,(colnames(qb_data_energy_dat_ts_daily_4()) %in% c('qb_data_energy_subset_ts_4().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_4()[,(colnames(qb_data_energy_dat_ts_daily_4()) %in% c('qb_data_energy_subset_ts_4().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_2_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_3()[,(colnames(qb_data_energy_dat_ts_hourly_3()) %in% c('qb_data_energy_subset_ts_3().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_3()[,(colnames(qb_data_energy_dat_ts_hourly_3()) %in% c('qb_data_energy_subset_ts_3().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_4()[,(colnames(qb_data_energy_dat_ts_hourly_4()) %in% c('qb_data_energy_subset_ts_4().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_4()[,(colnames(qb_data_energy_dat_ts_hourly_4()) %in% c('qb_data_energy_subset_ts_4().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_2_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_3(), type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_subset_ts_4(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  qb_date_ind_4_1 <- reactive({paste(input$qb_dates_4[1],"00:00:00",sep = " ")})
+  qb_date_ind_4_2 <- reactive({paste(input$qb_dates_4[2],"00:00:00",sep = " ")})
+  
+  qb_data_energy_subset_dat_5 <- reactive({subset(qb_ind_dat_1,subset = (qb_ind_dat_1$Date_time_local >= qb_date_ind_4_1() & qb_ind_dat_1$Date_time_local <= qb_date_ind_4_2()))})
+  
+  qb_data_energy_dat_ts_5 <- reactive({xts(qb_ind_dat_1$thermal,qb_ind_dat_1$Date_time_local)})
+  qb_data_energy_subset_ts_5 <- reactive({xts(qb_data_energy_subset_dat_5()$thermal,qb_data_energy_subset_dat_5()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly_5 <- reactive({to.yearly(qb_data_energy_dat_ts_5())})
+  qb_data_energy_dat_ts_monthly_5 <- reactive({to.monthly(qb_data_energy_subset_ts_5())})
+  qb_data_energy_dat_ts_weekly_5 <- reactive({to.weekly(qb_data_energy_subset_ts_5())})
+  qb_data_energy_dat_ts_daily_5 <- reactive({to.daily(qb_data_energy_subset_ts_5())})
+  qb_data_energy_dat_ts_hourly_5 <- reactive({to.hourly(qb_data_energy_subset_ts_5())})
+  
+  output$QB_FUEL_3_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_5()[,(colnames(qb_data_energy_dat_ts_yearly_5()) %in% c('qb_data_energy_dat_ts_5().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_5()[,(colnames(qb_data_energy_dat_ts_yearly_5()) %in% c('qb_data_energy_dat_ts_5().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_3_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_5()[,(colnames(qb_data_energy_dat_ts_weekly_5()) %in% c('qb_data_energy_subset_ts_5().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_5()[,(colnames(qb_data_energy_dat_ts_weekly_5()) %in% c('qb_data_energy_subset_ts_5().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_3_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_5()[,(colnames(qb_data_energy_dat_ts_daily_5()) %in% c('qb_data_energy_subset_ts_5().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_5()[,(colnames(qb_data_energy_dat_ts_daily_5()) %in% c('qb_data_energy_subset_ts_5().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_3_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_5()[,(colnames(qb_data_energy_dat_ts_hourly_5()) %in% c('qb_data_energy_subset_ts_5().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_5()[,(colnames(qb_data_energy_dat_ts_hourly_5()) %in% c('qb_data_energy_subset_ts_5().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_FUEL_3_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_5(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  qb_date_ind_5_1 <- reactive({paste(input$qb_dates_5[1],"00:00:00",sep = " ")})
+  qb_date_ind_5_2 <- reactive({paste(input$qb_dates_5[2],"00:00:00",sep = " ")})
+  
+  qb_date_ind_6_1 <- reactive({paste(input$qb_dates_6[1],"00:00:00",sep = " ")})
+  qb_date_ind_6_2 <- reactive({paste(input$qb_dates_6[2],"00:00:00",sep = " ")})
+  
+  qb_date_ind_7_1 <- reactive({paste(input$qb_dates_7[1],"00:00:00",sep = " ")})
+  qb_date_ind_7_2 <- reactive({paste(input$qb_dates_7[2],"00:00:00",sep = " ")})
+  
+  qb_date_ind_8_1 <- reactive({paste(input$qb_dates_8[1],"00:00:00",sep = " ")})
+  qb_date_ind_8_2 <- reactive({paste(input$qb_dates_8[2],"00:00:00",sep = " ")})
+  
+  qb_date_ind_9_1 <- reactive({paste(input$qb_dates_9[1],"00:00:00",sep = " ")})
+  qb_date_ind_9_2 <- reactive({paste(input$qb_dates_9[2],"00:00:00",sep = " ")})
+  
+  qb_date_ind_10_1 <- reactive({paste(input$qb_dates_10[1],"00:00:00",sep = " ")})
+  qb_date_ind_10_2 <- reactive({paste(input$qb_dates_10[2],"00:00:00",sep = " ")})
+  
+  qb_date_ind_11_1 <- reactive({paste(input$qb_dates_11[1],"00:00:00",sep = " ")})
+  qb_date_ind_11_2 <- reactive({paste(input$qb_dates_11[2],"00:00:00",sep = " ")})
+  
+  qb_date_ind_12_1 <- reactive({paste(input$qb_dates_12[1],"00:00:00",sep = " ")})
+  qb_date_ind_12_2 <- reactive({paste(input$qb_dates_12[2],"00:00:00",sep = " ")})
+  
+  qb_data_energy_subset_dat_6 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_5_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_5_2()))})
+  qb_data_energy_subset_dat_6_1 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_5_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_5_2()))})
+  
+  qb_data_energy_dat_ts_6 <- reactive({xts(qb_ind_dat_3$gross_generation_HQP,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_6 <- reactive({xts(qb_data_energy_subset_dat_6()$gross_generation_HQP,qb_data_energy_subset_dat_6()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_6_1 <- reactive({xts(qb_ind_dat_3$electricity_received_HQP,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_6_1 <- reactive({xts(qb_data_energy_subset_dat_6_1()$electricity_received_HQP,qb_data_energy_subset_dat_6_1()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly_6 <- reactive({to.yearly(qb_data_energy_dat_ts_6())})
+  qb_data_energy_dat_ts_monthly_6 <- reactive({to.monthly(qb_data_energy_subset_ts_6())})
+  qb_data_energy_dat_ts_weekly_6 <- reactive({to.weekly(qb_data_energy_subset_ts_6())})
+  qb_data_energy_dat_ts_daily_6 <- reactive({to.daily(qb_data_energy_subset_ts_6())})
+  qb_data_energy_dat_ts_hourly_6 <- reactive({to.hourly(qb_data_energy_subset_ts_6())})
+  
+  qb_data_energy_dat_ts_yearly_6_1 <- reactive({to.yearly(qb_data_energy_dat_ts_6_1())})
+  qb_data_energy_dat_ts_monthly_6_1 <- reactive({to.monthly(qb_data_energy_subset_ts_6_1())})
+  qb_data_energy_dat_ts_weekly_6_1 <- reactive({to.weekly(qb_data_energy_subset_ts_6_1())})
+  qb_data_energy_dat_ts_daily_6_1 <- reactive({to.daily(qb_data_energy_subset_ts_6_1())})
+  qb_data_energy_dat_ts_hourly_6_1 <- reactive({to.hourly(qb_data_energy_subset_ts_6_1())})
+  
+  output$QB_ENE_1_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_6()[,(colnames(qb_data_energy_dat_ts_yearly_6()) %in% c('qb_data_energy_dat_ts_6().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_6()[,(colnames(qb_data_energy_dat_ts_yearly_6()) %in% c('qb_data_energy_dat_ts_6().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_6_1()[,(colnames(qb_data_energy_dat_ts_yearly_6_1()) %in% c('qb_data_energy_dat_ts_6_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_6_1()[,(colnames(qb_data_energy_dat_ts_yearly_6_1()) %in% c('qb_data_energy_dat_ts_6_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_1_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_6()[,(colnames(qb_data_energy_dat_ts_weekly_6()) %in% c('qb_data_energy_subset_ts_6().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_6()[,(colnames(qb_data_energy_dat_ts_weekly_6()) %in% c('qb_data_energy_subset_ts_6().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_6_1()[,(colnames(qb_data_energy_dat_ts_weekly_6_1()) %in% c('qb_data_energy_subset_ts_6_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_6_1()[,(colnames(qb_data_energy_dat_ts_weekly_6_1()) %in% c('qb_data_energy_subset_ts_6_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_1_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_6()[,(colnames(qb_data_energy_dat_ts_daily_6()) %in% c('qb_data_energy_subset_ts_6().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_6()[,(colnames(qb_data_energy_dat_ts_daily_6()) %in% c('qb_data_energy_subset_ts_6().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_6_1()[,(colnames(qb_data_energy_dat_ts_daily_6_1()) %in% c('qb_data_energy_subset_ts_6_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_6_1()[,(colnames(qb_data_energy_dat_ts_daily_6_1()) %in% c('qb_data_energy_subset_ts_6_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_1_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_6()[,(colnames(qb_data_energy_dat_ts_hourly_6()) %in% c('qb_data_energy_subset_ts_6().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_6()[,(colnames(qb_data_energy_dat_ts_hourly_6()) %in% c('qb_data_energy_subset_ts_6().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_6_1()[,(colnames(qb_data_energy_dat_ts_hourly_6_1()) %in% c('qb_data_energy_subset_ts_6_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_6_1()[,(colnames(qb_data_energy_dat_ts_hourly_6_1()) %in% c('qb_data_energy_subset_ts_6_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_1_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_6(), type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_subset_ts_6_1(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  
+  qb_data_energy_subset_dat_7 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_6_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_6_2()))})
+  qb_data_energy_subset_dat_7_1 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_6_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_6_2()))})
+  
+  qb_data_energy_dat_ts_7 <- reactive({xts(qb_ind_dat_3$producer_consumption_HQP,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_7 <- reactive({xts(qb_data_energy_subset_dat_7()$producer_consumption_HQP,qb_data_energy_subset_dat_6()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_7_1 <- reactive({xts(qb_ind_dat_3$consumption_loss_interruption,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_7_1 <- reactive({xts(qb_data_energy_subset_dat_7_1()$consumption_loss_interruption,qb_data_energy_subset_dat_6_1()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly_7 <- reactive({to.yearly(qb_data_energy_dat_ts_7())})
+  qb_data_energy_dat_ts_monthly_7 <- reactive({to.monthly(qb_data_energy_subset_ts_7())})
+  qb_data_energy_dat_ts_weekly_7 <- reactive({to.weekly(qb_data_energy_subset_ts_7())})
+  qb_data_energy_dat_ts_daily_7 <- reactive({to.daily(qb_data_energy_subset_ts_7())})
+  qb_data_energy_dat_ts_hourly_7 <- reactive({to.hourly(qb_data_energy_subset_ts_7())})
+  
+  qb_data_energy_dat_ts_yearly_7_1 <- reactive({to.yearly(qb_data_energy_dat_ts_7_1())})
+  qb_data_energy_dat_ts_monthly_7_1 <- reactive({to.monthly(qb_data_energy_subset_ts_7_1())})
+  qb_data_energy_dat_ts_weekly_7_1 <- reactive({to.weekly(qb_data_energy_subset_ts_7_1())})
+  qb_data_energy_dat_ts_daily_7_1 <- reactive({to.daily(qb_data_energy_subset_ts_7_1())})
+  qb_data_energy_dat_ts_hourly_7_1 <- reactive({to.hourly(qb_data_energy_subset_ts_7_1())})
+  
+  output$QB_ENE_2_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_7()[,(colnames(qb_data_energy_dat_ts_yearly_7()) %in% c('qb_data_energy_dat_ts_7().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_7()[,(colnames(qb_data_energy_dat_ts_yearly_7()) %in% c('qb_data_energy_dat_ts_7().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_7_1()[,(colnames(qb_data_energy_dat_ts_yearly_7_1()) %in% c('qb_data_energy_dat_ts_7_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_7_1()[,(colnames(qb_data_energy_dat_ts_yearly_7_1()) %in% c('qb_data_energy_dat_ts_7_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_2_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_7()[,(colnames(qb_data_energy_dat_ts_weekly_7()) %in% c('qb_data_energy_subset_ts_7().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_7()[,(colnames(qb_data_energy_dat_ts_weekly_7()) %in% c('qb_data_energy_subset_ts_7().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_7_1()[,(colnames(qb_data_energy_dat_ts_weekly_7_1()) %in% c('qb_data_energy_subset_ts_7_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_7_1()[,(colnames(qb_data_energy_dat_ts_weekly_7_1()) %in% c('qb_data_energy_subset_ts_7_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_2_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_7()[,(colnames(qb_data_energy_dat_ts_daily_7()) %in% c('qb_data_energy_subset_ts_7().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_7()[,(colnames(qb_data_energy_dat_ts_daily_7()) %in% c('qb_data_energy_subset_ts_7().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_7_1()[,(colnames(qb_data_energy_dat_ts_daily_7_1()) %in% c('qb_data_energy_subset_ts_7_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_7_1()[,(colnames(qb_data_energy_dat_ts_daily_7_1()) %in% c('qb_data_energy_subset_ts_7_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_2_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_7()[,(colnames(qb_data_energy_dat_ts_hourly_7()) %in% c('qb_data_energy_subset_ts_7().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_7()[,(colnames(qb_data_energy_dat_ts_hourly_7()) %in% c('qb_data_energy_subset_ts_7().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_7_1()[,(colnames(qb_data_energy_dat_ts_hourly_7_1()) %in% c('qb_data_energy_subset_ts_7_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_7_1()[,(colnames(qb_data_energy_dat_ts_hourly_7_1()) %in% c('qb_data_energy_subset_ts_7_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_2_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_7(), type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_subset_ts_7_1(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  
+  
+  qb_data_energy_subset_dat_8 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_7_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_7_2()))})
+  qb_data_energy_subset_dat_8_1 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_7_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_7_2()))})
+  
+  qb_data_energy_dat_ts_8 <- reactive({xts(qb_ind_dat_3$load,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_8 <- reactive({xts(qb_data_energy_subset_dat_8()$load,qb_data_energy_subset_dat_8()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_8_1 <- reactive({xts(qb_ind_dat_3$consumption,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_8_1 <- reactive({xts(qb_data_energy_subset_dat_8_1()$consumption,qb_data_energy_subset_dat_8_1()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly_8 <- reactive({to.yearly(qb_data_energy_dat_ts_8())})
+  qb_data_energy_dat_ts_monthly_8 <- reactive({to.monthly(qb_data_energy_subset_ts_8())})
+  qb_data_energy_dat_ts_weekly_8 <- reactive({to.weekly(qb_data_energy_subset_ts_8())})
+  qb_data_energy_dat_ts_daily_8 <- reactive({to.daily(qb_data_energy_subset_ts_8())})
+  qb_data_energy_dat_ts_hourly_8 <- reactive({to.hourly(qb_data_energy_subset_ts_8())})
+  
+  qb_data_energy_dat_ts_yearly_8_1 <- reactive({to.yearly(qb_data_energy_dat_ts_8_1())})
+  qb_data_energy_dat_ts_monthly_8_1 <- reactive({to.monthly(qb_data_energy_subset_ts_8_1())})
+  qb_data_energy_dat_ts_weekly_8_1 <- reactive({to.weekly(qb_data_energy_subset_ts_8_1())})
+  qb_data_energy_dat_ts_daily_8_1 <- reactive({to.daily(qb_data_energy_subset_ts_8_1())})
+  qb_data_energy_dat_ts_hourly_8_1 <- reactive({to.hourly(qb_data_energy_subset_ts_8_1())})
+  
+  output$QB_ENE_3_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_8()[,(colnames(qb_data_energy_dat_ts_yearly_8()) %in% c('qb_data_energy_dat_ts_8().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_8()[,(colnames(qb_data_energy_dat_ts_yearly_8()) %in% c('qb_data_energy_dat_ts_8().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_8_1()[,(colnames(qb_data_energy_dat_ts_yearly_8_1()) %in% c('qb_data_energy_dat_ts_8_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_8_1()[,(colnames(qb_data_energy_dat_ts_yearly_8_1()) %in% c('qb_data_energy_dat_ts_8_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_3_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_8()[,(colnames(qb_data_energy_dat_ts_weekly_8()) %in% c('qb_data_energy_subset_ts_8().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_8()[,(colnames(qb_data_energy_dat_ts_weekly_8()) %in% c('qb_data_energy_subset_ts_8().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_8_1()[,(colnames(qb_data_energy_dat_ts_weekly_8_1()) %in% c('qb_data_energy_subset_ts_8_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_8_1()[,(colnames(qb_data_energy_dat_ts_weekly_8_1()) %in% c('qb_data_energy_subset_ts_8_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_3_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_8()[,(colnames(qb_data_energy_dat_ts_daily_8()) %in% c('qb_data_energy_subset_ts_8().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_8()[,(colnames(qb_data_energy_dat_ts_daily_8()) %in% c('qb_data_energy_subset_ts_8().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_8_1()[,(colnames(qb_data_energy_dat_ts_daily_8_1()) %in% c('qb_data_energy_subset_ts_8_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_8_1()[,(colnames(qb_data_energy_dat_ts_daily_8_1()) %in% c('qb_data_energy_subset_ts_8_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_3_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_8()[,(colnames(qb_data_energy_dat_ts_hourly_8()) %in% c('qb_data_energy_subset_ts_8().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_8()[,(colnames(qb_data_energy_dat_ts_hourly_8()) %in% c('qb_data_energy_subset_ts_8().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_8_1()[,(colnames(qb_data_energy_dat_ts_hourly_8_1()) %in% c('qb_data_energy_subset_ts_8_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_8_1()[,(colnames(qb_data_energy_dat_ts_hourly_8_1()) %in% c('qb_data_energy_subset_ts_8_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_3_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_8(), type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_subset_ts_8_1(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  
+  qb_data_energy_subset_dat_9 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_8_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_8_2()))})
+  qb_data_energy_subset_dat_9_1 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_8_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_8_2()))})
+  
+  qb_data_energy_dat_ts_9 <- reactive({xts(qb_ind_dat_3$export,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_9 <- reactive({xts(qb_data_energy_subset_dat_9()$export,qb_data_energy_subset_dat_9()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_9_1 <- reactive({xts(qb_ind_dat_3$electrivity_delivered_HQD,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_9_1 <- reactive({xts(qb_data_energy_subset_dat_9_1()$electrivity_delivered_HQD,qb_data_energy_subset_dat_9_1()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly_9 <- reactive({to.yearly(qb_data_energy_dat_ts_9())})
+  qb_data_energy_dat_ts_monthly_9 <- reactive({to.monthly(qb_data_energy_subset_ts_9())})
+  qb_data_energy_dat_ts_weekly_9 <- reactive({to.weekly(qb_data_energy_subset_ts_9())})
+  qb_data_energy_dat_ts_daily_9 <- reactive({to.daily(qb_data_energy_subset_ts_9())})
+  qb_data_energy_dat_ts_hourly_9 <- reactive({to.hourly(qb_data_energy_subset_ts_9())})
+  
+  qb_data_energy_dat_ts_yearly_9_1 <- reactive({to.yearly(qb_data_energy_dat_ts_9_1())})
+  qb_data_energy_dat_ts_monthly_9_1 <- reactive({to.monthly(qb_data_energy_subset_ts_9_1())})
+  qb_data_energy_dat_ts_weekly_9_1 <- reactive({to.weekly(qb_data_energy_subset_ts_9_1())})
+  qb_data_energy_dat_ts_daily_9_1 <- reactive({to.daily(qb_data_energy_subset_ts_9_1())})
+  qb_data_energy_dat_ts_hourly_9_1 <- reactive({to.hourly(qb_data_energy_subset_ts_9_1())})
+  
+  output$QB_ENE_4_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_9()[,(colnames(qb_data_energy_dat_ts_yearly_9()) %in% c('qb_data_energy_dat_ts_9().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_9()[,(colnames(qb_data_energy_dat_ts_yearly_9()) %in% c('qb_data_energy_dat_ts_9().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_9_1()[,(colnames(qb_data_energy_dat_ts_yearly_9_1()) %in% c('qb_data_energy_dat_ts_9_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_9_1()[,(colnames(qb_data_energy_dat_ts_yearly_9_1()) %in% c('qb_data_energy_dat_ts_9_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_4_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_9()[,(colnames(qb_data_energy_dat_ts_weekly_9()) %in% c('qb_data_energy_subset_ts_9().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_9()[,(colnames(qb_data_energy_dat_ts_weekly_9()) %in% c('qb_data_energy_subset_ts_9().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_9_1()[,(colnames(qb_data_energy_dat_ts_weekly_9_1()) %in% c('qb_data_energy_subset_ts_9_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_9_1()[,(colnames(qb_data_energy_dat_ts_weekly_9_1()) %in% c('qb_data_energy_subset_ts_9_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_4_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_9()[,(colnames(qb_data_energy_dat_ts_daily_9()) %in% c('qb_data_energy_subset_ts_9().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_9()[,(colnames(qb_data_energy_dat_ts_daily_9()) %in% c('qb_data_energy_subset_ts_9().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_9_1()[,(colnames(qb_data_energy_dat_ts_daily_9_1()) %in% c('qb_data_energy_subset_ts_9_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_9_1()[,(colnames(qb_data_energy_dat_ts_daily_9_1()) %in% c('qb_data_energy_subset_ts_9_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_4_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_9()[,(colnames(qb_data_energy_dat_ts_hourly_9()) %in% c('qb_data_energy_subset_ts_9().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_9()[,(colnames(qb_data_energy_dat_ts_hourly_9()) %in% c('qb_data_energy_subset_ts_9().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_9_1()[,(colnames(qb_data_energy_dat_ts_hourly_9_1()) %in% c('qb_data_energy_subset_ts_9_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_9_1()[,(colnames(qb_data_energy_dat_ts_hourly_9_1()) %in% c('qb_data_energy_subset_ts_9_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_4_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_9(), type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_subset_ts_9_1(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  
+  qb_data_energy_subset_dat_10 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_9_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_9_2()))})
+  qb_data_energy_subset_dat_10_1 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_9_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_9_2()))})
+  
+  qb_data_energy_dat_ts_10 <- reactive({xts(qb_ind_dat_3$vol_nonheritage_supply,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_10 <- reactive({xts(qb_data_energy_subset_dat_10()$vol_nonheritage_supply,qb_data_energy_subset_dat_10()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_10_1 <- reactive({xts(qb_ind_dat_3$vol_excessofheritage_mobilized,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_10_1 <- reactive({xts(qb_data_energy_subset_dat_10_1()$vol_excessofheritage_mobilized,qb_data_energy_subset_dat_10_1()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly_10 <- reactive({to.yearly(qb_data_energy_dat_ts_10())})
+  qb_data_energy_dat_ts_monthly_10 <- reactive({to.monthly(qb_data_energy_subset_ts_10())})
+  qb_data_energy_dat_ts_weekly_10 <- reactive({to.weekly(qb_data_energy_subset_ts_10())})
+  qb_data_energy_dat_ts_daily_10 <- reactive({to.daily(qb_data_energy_subset_ts_10())})
+  qb_data_energy_dat_ts_hourly_10 <- reactive({to.hourly(qb_data_energy_subset_ts_10())})
+  
+  qb_data_energy_dat_ts_yearly_10_1 <- reactive({to.yearly(qb_data_energy_dat_ts_10_1())})
+  qb_data_energy_dat_ts_monthly_10_1 <- reactive({to.monthly(qb_data_energy_subset_ts_10_1())})
+  qb_data_energy_dat_ts_weekly_10_1 <- reactive({to.weekly(qb_data_energy_subset_ts_10_1())})
+  qb_data_energy_dat_ts_daily_10_1 <- reactive({to.daily(qb_data_energy_subset_ts_10_1())})
+  qb_data_energy_dat_ts_hourly_10_1 <- reactive({to.hourly(qb_data_energy_subset_ts_10_1())})
+  
+  output$QB_ENE_5_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_10()[,(colnames(qb_data_energy_dat_ts_yearly_10()) %in% c('qb_data_energy_dat_ts_10().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_10()[,(colnames(qb_data_energy_dat_ts_yearly_10()) %in% c('qb_data_energy_dat_ts_10().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_10_1()[,(colnames(qb_data_energy_dat_ts_yearly_10_1()) %in% c('qb_data_energy_dat_ts_10_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_10_1()[,(colnames(qb_data_energy_dat_ts_yearly_10_1()) %in% c('qb_data_energy_dat_ts_10_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_5_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_10()[,(colnames(qb_data_energy_dat_ts_weekly_10()) %in% c('qb_data_energy_subset_ts_10().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_10()[,(colnames(qb_data_energy_dat_ts_weekly_10()) %in% c('qb_data_energy_subset_ts_10().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_10_1()[,(colnames(qb_data_energy_dat_ts_weekly_10_1()) %in% c('qb_data_energy_subset_ts_10_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_10_1()[,(colnames(qb_data_energy_dat_ts_weekly_10_1()) %in% c('qb_data_energy_subset_ts_10_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_5_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_10()[,(colnames(qb_data_energy_dat_ts_daily_10()) %in% c('qb_data_energy_subset_ts_10().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_10()[,(colnames(qb_data_energy_dat_ts_daily_10()) %in% c('qb_data_energy_subset_ts_10().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_10_1()[,(colnames(qb_data_energy_dat_ts_daily_10_1()) %in% c('qb_data_energy_subset_ts_10_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_10_1()[,(colnames(qb_data_energy_dat_ts_daily_10_1()) %in% c('qb_data_energy_subset_ts_10_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_5_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_10()[,(colnames(qb_data_energy_dat_ts_hourly_10()) %in% c('qb_data_energy_subset_ts_10().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_10()[,(colnames(qb_data_energy_dat_ts_hourly_10()) %in% c('qb_data_energy_subset_ts_10().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_10_1()[,(colnames(qb_data_energy_dat_ts_hourly_10_1()) %in% c('qb_data_energy_subset_ts_10_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_10_1()[,(colnames(qb_data_energy_dat_ts_hourly_10_1()) %in% c('qb_data_energy_subset_ts_10_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_5_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_10(), type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_subset_ts_10_1(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  
+  qb_data_energy_subset_dat_11 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_10_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_10_2()))})
+  qb_data_energy_subset_dat_11_1 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_10_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_10_2()))})
+  qb_data_energy_subset_dat_11_2 <- reactive({subset(qb_ind_dat_2,subset = (qb_ind_dat_2$Date_Time_UTC >= qb_date_ind_12_1() & qb_ind_dat_2$Date_Time_UTC <= qb_date_ind_12_2()))})
+  
+  qb_data_energy_dat_ts_11 <- reactive({xts(qb_ind_dat_3$total_consumption,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_11 <- reactive({xts(qb_data_energy_subset_dat_11()$total_consumption,qb_data_energy_subset_dat_11()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_11_1 <- reactive({xts(qb_ind_dat_3$unitcost_excess,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_11_1 <- reactive({xts(qb_data_energy_subset_dat_11_1()$unitcost_excess,qb_data_energy_subset_dat_11_1()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_11_2 <- reactive({xts(qb_ind_dat_2$total_demand,qb_ind_dat_2$Date_Time_UTC)})
+  qb_data_energy_subset_ts_11_2 <- reactive({xts(qb_data_energy_subset_dat_11_2()$total_demand,qb_data_energy_subset_dat_11_2()$Date_Time_UTC)})
+  
+  qb_data_energy_dat_ts_yearly_11 <- reactive({to.yearly(qb_data_energy_dat_ts_11())})
+  qb_data_energy_dat_ts_monthly_11 <- reactive({to.monthly(qb_data_energy_subset_ts_11())})
+  qb_data_energy_dat_ts_weekly_11 <- reactive({to.weekly(qb_data_energy_subset_ts_11())})
+  qb_data_energy_dat_ts_daily_11 <- reactive({to.daily(qb_data_energy_subset_ts_11())})
+  qb_data_energy_dat_ts_hourly_11 <- reactive({to.hourly(qb_data_energy_subset_ts_11())})
+  
+  qb_data_energy_dat_ts_yearly_11_1 <- reactive({to.yearly(qb_data_energy_dat_ts_11_1())})
+  qb_data_energy_dat_ts_monthly_11_1 <- reactive({to.monthly(qb_data_energy_subset_ts_11_1())})
+  qb_data_energy_dat_ts_weekly_11_1 <- reactive({to.weekly(qb_data_energy_subset_ts_11_1())})
+  qb_data_energy_dat_ts_daily_11_1 <- reactive({to.daily(qb_data_energy_subset_ts_11_1())})
+  qb_data_energy_dat_ts_hourly_11_1 <- reactive({to.hourly(qb_data_energy_subset_ts_11_1())})
+  
+  qb_data_energy_dat_ts_yearly_11_2 <- reactive({to.yearly(qb_data_energy_dat_ts_11_2())})
+  qb_data_energy_dat_ts_monthly_11_2 <- reactive({to.monthly(qb_data_energy_subset_ts_11_2())})
+  qb_data_energy_dat_ts_weekly_11_2 <- reactive({to.weekly(qb_data_energy_subset_ts_11_2())})
+  qb_data_energy_dat_ts_daily_11_2 <- reactive({to.daily(qb_data_energy_subset_ts_11_2())})
+  qb_data_energy_dat_ts_hourly_11_2 <- reactive({to.hourly(qb_data_energy_subset_ts_11_2())})
+  
+  output$QB_ENE_6_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_11()[,(colnames(qb_data_energy_dat_ts_yearly_11()) %in% c('qb_data_energy_dat_ts_11().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_11()[,(colnames(qb_data_energy_dat_ts_yearly_11()) %in% c('qb_data_energy_dat_ts_11().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_11_1()[,(colnames(qb_data_energy_dat_ts_yearly_11_1()) %in% c('qb_data_energy_dat_ts_11_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_11_1()[,(colnames(qb_data_energy_dat_ts_yearly_11_1()) %in% c('qb_data_energy_dat_ts_11_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_6_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_11()[,(colnames(qb_data_energy_dat_ts_weekly_11()) %in% c('qb_data_energy_subset_ts_11().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_11()[,(colnames(qb_data_energy_dat_ts_weekly_11()) %in% c('qb_data_energy_subset_ts_11().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_11_1()[,(colnames(qb_data_energy_dat_ts_weekly_11_1()) %in% c('qb_data_energy_subset_ts_11_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_11_1()[,(colnames(qb_data_energy_dat_ts_weekly_11_1()) %in% c('qb_data_energy_subset_ts_11_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_6_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_11()[,(colnames(qb_data_energy_dat_ts_daily_11()) %in% c('qb_data_energy_subset_ts_11().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_11()[,(colnames(qb_data_energy_dat_ts_daily_11()) %in% c('qb_data_energy_subset_ts_11().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_11_1()[,(colnames(qb_data_energy_dat_ts_daily_11_1()) %in% c('qb_data_energy_subset_ts_11_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_11_1()[,(colnames(qb_data_energy_dat_ts_daily_11_1()) %in% c('qb_data_energy_subset_ts_11_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_6_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_11()[,(colnames(qb_data_energy_dat_ts_hourly_11()) %in% c('qb_data_energy_subset_ts_11().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_11()[,(colnames(qb_data_energy_dat_ts_hourly_11()) %in% c('qb_data_energy_subset_ts_11().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_11_1()[,(colnames(qb_data_energy_dat_ts_hourly_11_1()) %in% c('qb_data_energy_subset_ts_11_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_11_1()[,(colnames(qb_data_energy_dat_ts_hourly_11_1()) %in% c('qb_data_energy_subset_ts_11_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_6_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_11(), type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_subset_ts_11_1(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  output$QB_ENE_8_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_11_2()[,(colnames(qb_data_energy_dat_ts_yearly_11_2()) %in% c('qb_data_energy_dat_ts_11_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_11_2()[,(colnames(qb_data_energy_dat_ts_yearly_11_2()) %in% c('qb_data_energy_dat_ts_11_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_8_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_11_2()[,(colnames(qb_data_energy_dat_ts_weekly_11_2()) %in% c('qb_data_energy_subset_ts_11_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_11_2()[,(colnames(qb_data_energy_dat_ts_weekly_11_2()) %in% c('qb_data_energy_subset_ts_11_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_8_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_11_2()[,(colnames(qb_data_energy_dat_ts_daily_11_2()) %in% c('qb_data_energy_subset_ts_11_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_11_2()[,(colnames(qb_data_energy_dat_ts_daily_11_2()) %in% c('qb_data_energy_subset_ts_11_2().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_8_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_11_2()[,(colnames(qb_data_energy_dat_ts_hourly_11_2()) %in% c('qb_data_energy_subset_ts_11_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_11_2()[,(colnames(qb_data_energy_dat_ts_hourly_11_2()) %in% c('qb_data_energy_subset_ts_11_2().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_8_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_11_2(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  
+  qb_data_energy_subset_dat_12 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_11_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_11_2()))})
+  qb_data_energy_subset_dat_12_1 <- reactive({subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= qb_date_ind_11_1() & qb_ind_dat_3$Date_time_local <= qb_date_ind_11_2()))})
+  
+  
+  qb_data_energy_dat_ts_12 <- reactive({xts(qb_ind_dat_3$cost,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_12 <- reactive({xts(qb_data_energy_subset_dat_12()$cost,qb_data_energy_subset_dat_12()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_12_1 <- reactive({xts(qb_ind_dat_3$cost_hourly,qb_ind_dat_3$Date_time_local)})
+  qb_data_energy_subset_ts_12_1 <- reactive({xts(qb_data_energy_subset_dat_12_1()$cost_hourly,qb_data_energy_subset_dat_12_1()$Date_time_local)})
+  
+  qb_data_energy_dat_ts_yearly_12 <- reactive({to.yearly(qb_data_energy_dat_ts_12())})
+  qb_data_energy_dat_ts_monthly_12 <- reactive({to.monthly(qb_data_energy_subset_ts_12())})
+  qb_data_energy_dat_ts_weekly_12 <- reactive({to.weekly(qb_data_energy_subset_ts_12())})
+  qb_data_energy_dat_ts_daily_12 <- reactive({to.daily(qb_data_energy_subset_ts_12())})
+  qb_data_energy_dat_ts_hourly_12 <- reactive({to.hourly(qb_data_energy_subset_ts_12())})
+  
+  qb_data_energy_dat_ts_yearly_12_1 <- reactive({to.yearly(qb_data_energy_dat_ts_12_1())})
+  qb_data_energy_dat_ts_monthly_12_1 <- reactive({to.monthly(qb_data_energy_subset_ts_12_1())})
+  qb_data_energy_dat_ts_weekly_12_1 <- reactive({to.weekly(qb_data_energy_subset_ts_12_1())})
+  qb_data_energy_dat_ts_daily_12_1 <- reactive({to.daily(qb_data_energy_subset_ts_12_1())})
+  qb_data_energy_dat_ts_hourly_12_1 <- reactive({to.hourly(qb_data_energy_subset_ts_12_1())})
+  
+  output$QB_ENE_7_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_yearly_12()[,(colnames(qb_data_energy_dat_ts_yearly_12()) %in% c('qb_data_energy_dat_ts_12().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_12()[,(colnames(qb_data_energy_dat_ts_yearly_12()) %in% c('qb_data_energy_dat_ts_12().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_12_1()[,(colnames(qb_data_energy_dat_ts_yearly_12_1()) %in% c('qb_data_energy_dat_ts_12_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_yearly_12_1()[,(colnames(qb_data_energy_dat_ts_yearly_12_1()) %in% c('qb_data_energy_dat_ts_12_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_7_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_weekly_12()[,(colnames(qb_data_energy_dat_ts_weekly_12()) %in% c('qb_data_energy_subset_ts_12().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_12()[,(colnames(qb_data_energy_dat_ts_weekly_12()) %in% c('qb_data_energy_subset_ts_12().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_12_1()[,(colnames(qb_data_energy_dat_ts_weekly_12_1()) %in% c('qb_data_energy_subset_ts_12_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_weekly_12_1()[,(colnames(qb_data_energy_dat_ts_weekly_12_1()) %in% c('qb_data_energy_subset_ts_12_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_7_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_daily_12()[,(colnames(qb_data_energy_dat_ts_daily_12()) %in% c('qb_data_energy_subset_ts_12().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_12()[,(colnames(qb_data_energy_dat_ts_daily_12()) %in% c('qb_data_energy_subset_ts_12().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_12_1()[,(colnames(qb_data_energy_dat_ts_daily_12_1()) %in% c('qb_data_energy_subset_ts_12_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_daily_12_1()[,(colnames(qb_data_energy_dat_ts_daily_12_1()) %in% c('qb_data_energy_subset_ts_12_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_7_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(qb_data_energy_dat_ts_hourly_12()[,(colnames(qb_data_energy_dat_ts_hourly_12()) %in% c('qb_data_energy_subset_ts_12().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_12()[,(colnames(qb_data_energy_dat_ts_hourly_12()) %in% c('qb_data_energy_subset_ts_12().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_12_1()[,(colnames(qb_data_energy_dat_ts_hourly_12_1()) %in% c('qb_data_energy_subset_ts_12_1().High'))], type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_dat_ts_hourly_12_1()[,(colnames(qb_data_energy_dat_ts_hourly_12_1()) %in% c('qb_data_energy_subset_ts_12_1().Low'))], type = "line", name = "Low Load: ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$QB_ENE_7_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(qb_data_energy_subset_ts_12(), type = "line", name = "High Load: ", color = "green") %>%
+      hc_add_series(qb_data_energy_subset_ts_12_1(), type = "line", name = "High Load: ", color = "green")
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   data_dict <- read_xlsx("www/data_dictionay.xlsx", sheet = config$dd_sheet)
   data_dict_df <- as.data.frame(data_dict)
@@ -2451,6 +3370,9 @@ server <- function(input, output, session) {
       qb_dd_1 <- as.Date(Sys.Date())-(7)
       qb_dd_1_1 <- paste(qb_dd_1,"00:00:00",sep=" ")
       qb_dd_2_2 <- as.Date(tail(qb_ind_dat_1$Date_time_local,1))
+      qb_dd_3_3 <- as.Date(tail(qb_ind_dat_3$Date_time_local,1))
+      qb_dd_4_4 <- as.Date(head(qb_ind_dat_3$Date_time_local,1))
+      qb_dd_5_5 <- as.Date(tail(qb_ind_dat_2$Date_Time_UTC,1))
       updateSliderInput(session, "qb_dates_1",
                         min = as.Date(head(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
                         max = as.Date(tail(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
@@ -2461,6 +3383,57 @@ server <- function(input, output, session) {
                         max = as.Date(tail(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
                         value=c(as.Date(qb_dd_1_1),qb_dd_2_2),
                         timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_3",
+                        min = as.Date(head(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_1_1),qb_dd_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_4",
+                        min = as.Date(head(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_1_1),qb_dd_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_5",
+                        min = as.Date(head(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_4_4),qb_dd_3_3),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_6",
+                        min = as.Date(head(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_4_4),qb_dd_3_3),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_7",
+                        min = as.Date(head(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_4_4),qb_dd_3_3),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_8",
+                        min = as.Date(head(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_4_4),qb_dd_3_3),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_9",
+                        min = as.Date(head(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_4_4),qb_dd_3_3),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_10",
+                        min = as.Date(head(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_4_4),qb_dd_3_3),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_11",
+                        min = as.Date(head(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_3$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_4_4),qb_dd_3_3),
+                        timeFormat="%Y-%m-%d")
+      updateSliderInput(session, "qb_dates_12",
+                        min = as.Date(head(qb_ind_dat_2$Date_time_local,1),"%Y-%m-%d"),
+                        max = as.Date(tail(qb_ind_dat_2$Date_time_local,1),"%Y-%m-%d"),
+                        value=c(as.Date(qb_dd_1_1),qb_dd_5_5),
+                        timeFormat="%Y-%m-%d")
+      
     }
     if(input$rted_menu == "BC"){
       bc_dd_1 <- as.Date(Sys.Date())-(7)
