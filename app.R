@@ -20,6 +20,7 @@ library(shinyBS)
 library(config)
 library(readxl)
 library(RODBC)
+library(tidyquant)
 
 
 dashboard_ui_slider_date_end <- Sys.Date()
@@ -106,6 +107,14 @@ margin-left: 10px;
 margin-left: 5px;
 }
 
+.red_output{
+color: red;
+}
+
+.green_output{
+color: green;
+}
+
 
                                     ")),
     tabItems(
@@ -121,7 +130,7 @@ margin-left: 5px;
               fluidRow(
                 box(
                   title = fluidRow(id = "dash_title",
-                    fluidRow(column(width = 8, h4("Prince Edward Island")),column(width = 4, h4("Counter1")))),
+                    fluidRow(column(width = 8, h4("Prince Edward Island")),column(width = 12, id="peimean",uiOutput("PEI_MEAN")))),
                   width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
@@ -130,14 +139,14 @@ margin-left: 5px;
                 ),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Nova Scotia")),column(width = 4, h4("Counter2")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4("Nova Scotia")),column(width = 12, id="nsmean",uiOutput("NS_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("NS_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_NS","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("New Brunswick")),column(width = 4, h4("Counter3")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4("New Brunswick")),column(width = 12, id="nbmean",uiOutput("NB_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("NB_load"), type = "html", loader = "loader3")),
@@ -146,21 +155,21 @@ margin-left: 5px;
               fluidRow(
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Ontario")),column(width = 4, h4("Counter4")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4("Ontario")),column(width = 12, id="onmean",uiOutput("ON_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("ON_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_ON","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Alberta")),column(width = 4, h4("Counter5")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4("Alberta")),column(width = 12, id="abmean",uiOutput("AB_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("AB_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_AB","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("British Coloumbia")),column(width = 4, h4("Counter6")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4("British Coloumbia")),column(width = 12, id="bcmean",uiOutput("BC_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("BC_load"), type = "html", loader = "loader3")),
@@ -169,14 +178,14 @@ margin-left: 5px;
               fluidRow(
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Newfoundland & Labrador")),column(width = 4, h4("Counter7")))),width = 6, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4("Newfoundland & Labrador")),column(width =12, id="nflmean",uiOutput("NFL_MEAN")))),width = 6, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("NFL_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_NFL","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Quebec")),column(width = 4, h4("Counter8")))),width = 6, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4("Quebec")),column(width = 12, id="qbmean",uiOutput("QB_MEAN")))),width = 6, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("QB_load"), type = "html", loader = "loader3")),
@@ -1345,6 +1354,21 @@ server <- function(input, output, session) {
   qb_ind_dat_1 <- tbl(con, config$provinces$QUEBEC$table2) %>% arrange(Date_time_local) %>% collect()
   qb_ind_dat_2 <- tbl(con, config$provinces$QUEBEC$table1) %>% arrange(Date_time_local) %>% collect()
   qb_ind_dat_3 <- tbl(con, config$provinces$QUEBEC$table3) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_1 <- tbl(con, config$provinces$AB$table1) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_2 <- tbl(con, config$provinces$AB$table2) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_3 <- tbl(con, config$provinces$AB$table3) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_4 <- tbl(con, config$provinces$AB$table4) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_5 <- tbl(con, config$provinces$AB$table5) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_6 <- tbl(con, config$provinces$AB$table6) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_7 <- tbl(con, config$provinces$AB$table7) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_8 <- tbl(con, config$provinces$AB$table8) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_9 <- tbl(con, config$provinces$AB$table9) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_10 <- tbl(con, config$provinces$AB$table10) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_11 <- tbl(con, config$provinces$AB$table11) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_12 <- tbl(con, config$provinces$AB$table12) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_13 <- tbl(con, config$provinces$AB$table13) %>% arrange(Date_time_local) %>% collect()
+  #ab_ind_dat_14 <- tbl(con, config$provinces$AB$table14) %>% arrange(Date_time_local) %>% collect()
+  
   
   output$timer <- renderText({invalidateLater(1000, session)
     paste("",Sys.time())})
@@ -1354,7 +1378,22 @@ server <- function(input, output, session) {
   nbload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                   checkFunc = check_db_nb, valueFunc = get_data_nb)
   nbload_data <- reactive({nbload_data_pre()})
-  #nbload_data_mean <- reactive{(mean(nbload_data()$nb_load))} 
+  nbload_data_mean_cr <- reactive({tail(nbload_data()$nb_load,1)})
+  nbload_data_mean_pst <- reactive({nbload_data()$nb_load[nrow(nbload_data())-1]})
+  nbload_data_mean_diff <- reactive({nbload_data_mean_cr()-nbload_data_mean_pst()})
+  nbload_data_mean_prcnt <- reactive({nbload_data_mean_diff()/100})
+  observeEvent(nbload_data_pre(),{
+    
+  if(nbload_data_mean_prcnt() < 0){
+    removeClass("nbmean","green_output")
+    addClass("nbmean","red_output")
+    output$NB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(nbload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+  }
+  if(nbload_data_mean_prcnt() > 0){
+    removeClass("nbmean","red_output")
+    addClass("nbmean","green_output")
+    output$NB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(nbload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+  }})
   nbload_subset <- reactive({subset(nbload_data(),subset = nbload_data()$Date_time_local >= previous_time_1)})
   nb_load_ts <-  reactive({xts(nbload_subset()$nb_load,nbload_subset()$Date_time_local)})
   
@@ -1370,6 +1409,22 @@ server <- function(input, output, session) {
   nsload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                   checkFunc = check_db_ns, valueFunc = get_data_ns)
   nsload_data <- reactive({nsload_data_pre()})
+  nsload_data_mean_cr <- reactive({tail(nsload_data()$Net_Load,1)})
+  nsload_data_mean_pst <- reactive({nsload_data()$Net_Load[nrow(nsload_data())-1]})
+  nsload_data_mean_diff <- reactive({nsload_data_mean_cr()-nsload_data_mean_pst()})
+  nsload_data_mean_prcnt <- reactive({nsload_data_mean_diff()/100})
+  observeEvent(nsload_data_pre(),{
+    
+    if(nsload_data_mean_prcnt() < 0){
+      removeClass("nsmean","green_output")
+      addClass("nsmean","red_output")
+      output$NS_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(nsload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }
+    if(nsload_data_mean_prcnt() > 0){
+      removeClass("nsmean","red_output")
+      addClass("nsmean","green_output")
+      output$NS_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(nsload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }})
   nsload_subset <- reactive({subset(nsload_data(),subset = nsload_data()$Date_time_local >= previous_time_1)})
   ns_load_ts <-  reactive({xts(nsload_subset()$Net_Load,nsload_subset()$Date_time_local)})
   
@@ -1396,6 +1451,23 @@ server <- function(input, output, session) {
   onload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                   checkFunc = check_db_on, valueFunc = get_data_on)
   onload_data <- reactive({onload_data_pre()})
+  onload_data_mean_cr <- reactive({tail(onload_data()$total_load,1)})
+  onload_data_mean_pst <- reactive({onload_data()$total_load[nrow(onload_data())-1]})
+  onload_data_mean_diff <- reactive({onload_data_mean_cr()-onload_data_mean_pst()})
+  onload_data_mean_prcnt <- reactive({onload_data_mean_diff()/100})
+  observeEvent(onload_data_pre(),{
+    
+    if(onload_data_mean_prcnt() < 0){
+      removeClass("onmean","green_output")
+      addClass("onmean","red_output")
+      output$ON_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(onload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }
+    if(onload_data_mean_prcnt() > 0){
+      removeClass("onmean","red_output")
+      addClass("onmean","green_output")
+      output$ON_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(onload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }})
+  
   onload_subset <- reactive({subset(onload_data(),subset = onload_data()$date_time_local >= previous_time_1)})
   on_load_ts <-  reactive({xts(onload_subset()$total_load,onload_subset()$date_time_local)})
   
@@ -1409,6 +1481,23 @@ server <- function(input, output, session) {
   peiload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                    checkFunc = check_db_pei, valueFunc = get_data_pei)
   peiload_data <- reactive({peiload_data_pre()})
+  peiload_data_mean_cr <- reactive({tail(peiload_data()$on_island_load,1)})
+  peiload_data_mean_pst <- reactive({peiload_data()$on_island_load[nrow(peiload_data())-1]})
+  peiload_data_mean_diff <- reactive({peiload_data_mean_cr()-peiload_data_mean_pst()})
+  peiload_data_mean_prcnt <- reactive({peiload_data_mean_diff()/100})
+  observeEvent(peiload_data_pre(),{
+    
+    if(peiload_data_mean_prcnt() < 0){
+      removeClass("peimean","green_output")
+      addClass("peimean","red_output")
+      output$PEI_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(peiload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }
+    if(peiload_data_mean_prcnt() > 0){
+      removeClass("peimean","red_output")
+      addClass("peimean","green_output")
+      output$PEI_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(peiload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }})
+  
   peiload_subset <- reactive({subset(peiload_data(),subset = peiload_data()$Date_time_local >= previous_time_1)})
   pei_load_ts <-  reactive({xts(peiload_subset()$on_island_load,peiload_subset()$Date_time_local)})
   
@@ -1422,6 +1511,23 @@ server <- function(input, output, session) {
   nflload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                    checkFunc = check_db_nfl, valueFunc = get_data_nfl)
   nflload_data <- reactive({nflload_data_pre()})
+  nflload_data_mean_cr <- reactive({tail(nflload_data()$Net_Load_MW,1)})
+  nflload_data_mean_pst <- reactive({nflload_data()$Net_Load_MW[nrow(nflload_data())-1]})
+  nflload_data_mean_diff <- reactive({nflload_data_mean_cr()-nflload_data_mean_pst()})
+  nflload_data_mean_prcnt <- reactive({nflload_data_mean_diff()/100})
+  observeEvent(nflload_data_pre(),{
+    
+    if(nflload_data_mean_prcnt() < 0){
+      removeClass("nflmean","green_output")
+      addClass("nflmean","red_output")
+      output$NFL_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(nflload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }
+    if(nflload_data_mean_prcnt() > 0){
+      removeClass("nflmean","red_output")
+      addClass("nflmean","green_output")
+      output$NFL_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(nflload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }})
+  
   nflload_subset <- reactive({subset(nflload_data(),subset = nflload_data()$Date_time_local >= previous_time_1)})
   nfl_load_ts <-  reactive({xts(nflload_subset()$Net_Load_MW,nflload_subset()$Date_time_local)})
   
@@ -1435,6 +1541,23 @@ server <- function(input, output, session) {
   qbload_data_pre <- reactivePoll(intervalMillis = 300000, session = session,
                                    checkFunc = check_db_qb, valueFunc = get_data_qb)
   qbload_data <- reactive({qbload_data_pre()})
+  qbload_data_mean_cr <- reactive({tail(qbload_data()$total_demand,1)})
+  qbload_data_mean_pst <- reactive({qbload_data()$total_demand[nrow(qbload_data())-1]})
+  qbload_data_mean_diff <- reactive({qbload_data_mean_cr()-qbload_data_mean_pst()})
+  qbload_data_mean_prcnt <- reactive({qbload_data_mean_diff()/100})
+  observeEvent(qbload_data_pre,{
+    
+    if(qbload_data_mean_prcnt() < 0){
+      removeClass("qbmean","green_output")
+      addClass("qbmean","red_output")
+      output$QB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(qbload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }
+    if(qbload_data_mean_prcnt() > 0){
+      removeClass("qbmean","red_output")
+      addClass("qbmean","green_output")
+      output$QB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(qbload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    }})
+  
   qbload_subset <- reactive({subset(qbload_data(),subset = qbload_data()$Date_time_local >= previous_time_1)})
   qb_load_ts <-  reactive({xts(qbload_subset()$total_demand,qbload_subset()$Date_time_local)})
   
@@ -3181,12 +3304,8 @@ server <- function(input, output, session) {
       hc_add_series(qb_data_energy_subset_ts_12_1(), type = "line", name = "High Load: ", color = "green")
   })
   
-  
-  
-  
-  
-  
-  
+  ab_date_ind_5_1 <- reactive({paste(input$ab_dates_1[1],"00:00:00",sep = " ")})
+  ab_date_ind_5_2 <- reactive({paste(input$ab_dates_1[2],"00:00:00",sep = " ")})
   
   
   
@@ -3371,7 +3490,7 @@ server <- function(input, output, session) {
       qb_dd_1_1 <- paste(qb_dd_1,"00:00:00",sep=" ")
       qb_dd_2_2 <- as.Date(tail(qb_ind_dat_1$Date_time_local,1))
       qb_dd_3_3 <- as.Date(tail(qb_ind_dat_3$Date_time_local,1))
-      qb_dd_4_4 <- as.Date(head(qb_ind_dat_3$Date_time_local,1))
+      qb_dd_4_4 <- as.Date(tail(qb_ind_dat_3$Date_time_local,1))-(7)
       qb_dd_5_5 <- as.Date(tail(qb_ind_dat_2$Date_Time_UTC,1))
       updateSliderInput(session, "qb_dates_1",
                         min = as.Date(head(qb_ind_dat_1$Date_time_local,1),"%Y-%m-%d"),

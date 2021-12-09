@@ -13,9 +13,9 @@ default:
     PEI:
       table1: "pei_rted"
     BC:
-      table1: "bc_test_table_1"
-      table2: "bc_test_table_2"
-      table3: "bc_test_table_3"
+      table1: "bc_hourly_table_1_rted_utc"
+      table2: "z_bc_test_table_2"
+      table3: "bc_hourly_table_3_rted_utc"
     AB:
       table1: "ab_hourly_demand_utc"
       table2: "ab_test_3"
@@ -60,9 +60,9 @@ local:
     PEI:
       table1: "pei_rted"
     BC:
-      table1: "bc_test_table_1"
-      table2: "bc_test_table_2"
-      table3: "bc_test_table_3"
+      table1: "bc_hourly_table_1_rted_utc"
+      table2: "z_bc_test_table_2"
+      table3: "bc_hourly_table_3_rted_utc"
     AB:
       table1: "ab_hourly_demand_utc"
       table2: "ab_test_3"
@@ -107,9 +107,9 @@ shinyapps:
     PEI:
       table1: "pei_rted"
     BC:
-      table1: "bc_test_table_1"
-      table2: "bc_test_table_2"
-      table3: "bc_test_table_3"
+      table1: "bc_hourly_table_1_rted_utc"
+      table2: "z_bc_test_table_2"
+      table3: "bc_hourly_table_3_rted_utc"
     AB:
       table1: "ab_hourly_demand_utc"
       table2: "ab_test_3"
