@@ -21,6 +21,8 @@ library(config)
 library(readxl)
 library(RODBC)
 library(tidyquant)
+library(googlesheets4)
+library(googledrive)
 
 
 dashboard_ui_slider_date_end <- Sys.Date()
@@ -458,6 +460,8 @@ color: green;
                        )))
               ),
       tabItem(tabName = "NB",
+              tabBox(title = "New Brunswick", id = "tabnb", height = "100%", width = "100%", 
+              tabPanel("Visualization",
               fluidRow(
                 column(width =10, offset = 2,
                        box(
@@ -573,7 +577,9 @@ color: green;
                            column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
                            column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
                          )
-                       )))
+                       )))),
+              tabPanel("Legends",dataTableOutput("DATA_DICTIONARY_NB"))
+              )
               
       ),
       tabItem(tabName = "ON",
@@ -1076,7 +1082,316 @@ color: green;
                        ))),
               
               ),
-      tabItem(tabName = "AB",h2("hello world")),
+      tabItem(tabName = "AB",
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Hydro", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_8", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_8 != 1",sliderInput("ab_dates_8",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d"))),
+                                  column(width = 2, selectInput("ab_ind_8_ff", h4("Select Asset"), 
+                                                                choices = list(
+                                                                  "Taylor Hydro (TAY1)" = "Taylor Hydro (TAY1)",
+                                                                  "Bow River Hydro (BOW1)" = "Bow River Hydro (BOW1)",
+                                                                  "Bighorn Hydro (BIG)" = "Bighorn Hydro (BIG)",
+                                                                  "Raymond Reservoir (RYMD)" = "Raymond Reservoir (RYMD)",
+                                                                  "Oldman River (OMRH)" = "Oldman River (OMRH)",
+                                                                  "Dickson Dam (DKSN)" = "Dickson Dam (DKSN)",
+                                                                  "Irrican Hydro (ICP1)" = "Irrican Hydro (ICP1)",
+                                                                  "Brazeau Hydro (BRA)" = "Brazeau Hydro (BRA)",
+                                                                  "Chin Chute (CHIN)" = "Chin Chute (CHIN)"
+                                                                  ), selected = "Chin Chute (CHIN)"))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ab_8 == 1",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_8_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_8 == 6",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_8_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_8 == 3",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_8_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_8 == 4",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_8_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_8 == 5",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_8_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Storage", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_9", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_9 != 1",sliderInput("ab_dates_9",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d"))),
+                                  column(width = 2, selectInput("ab_ind_9_ff", h4("Select Asset"), 
+                                                                choices = list(
+                                                                  "eReserve1 Rycroft (ERV1)" = "eReserve1 Rycroft (ERV1)",
+                                                                  "eReserve2 Buffalo Creek (ERV2)" = "eReserve2 Buffalo Creek (ERV2)",
+                                                                  "Summerview (SUM1)" = "Summerview (SUM1)"
+                                                                ), selected = "Summerview (SUM1)"))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ab_9 == 1",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_9_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_9 == 6",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_9_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_9 == 3",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_9_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_9 == 4",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_9_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_9 == 5",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_9_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Solar", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_10", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_10 != 1",sliderInput("ab_dates_10",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d"))),
+                                  column(width = 2, selectInput("ab_ind_10_ff", h4("Select Asset"), 
+                                                                choices = list(
+                                                                  "Brooks Solar (BSC1)" = "Brooks Solar (BSC1)",
+                                                                  "Suffield (SUF1)" = "Suffield (SUF1)",
+                                                                  "Travers (TVS1)" = "Travers (TVS1)",
+                                                                  "Hull (HUL1)" = "Hull (HUL1)",
+                                                                  "Westfield Yellow Lake (WEF1)" = "Westfield Yellow Lake (WEF1)",
+                                                                  "Claresholm 1 (CLR1)" = "Claresholm 1 (CLR1)",
+                                                                  "BRD1 Burdett (BRD1)" = "BRD1 Burdett (BRD1)",
+                                                                  "Jenner (JER1)" = "Jenner (JER1)",
+                                                                  "Vauxhall (VXH1)" = "Vauxhall (VXH1)",
+                                                                  "BUR1 Burdett (BUR1)" ="BUR1 Burdett (BUR1)",
+                                                                  "Hays (HYS1)" = "Hays (HYS1)",
+                                                                  "Innisfail (INF1)" = "Innisfail (INF1)",
+                                                                  "Claresholm 2 (CLR2)" = "Claresholm 2 (CLR2)"
+                                                                ), selected = "Claresholm 2 (CLR2)"))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ab_10 == 1",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_10_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_10 == 6",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_10_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_10 == 3",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_10_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_10 == 4",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_10_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_10 == 5",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_10_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Wind", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_11", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_11 != 1",sliderInput("ab_dates_11",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d"))),
+                                  column(width = 2, selectInput("ab_ind_11_ff", h4("Select Asset"), 
+                                                                choices = list(
+                                                                  "Blue Trail Wind (BTR1)*"="Blue Trail Wind (BTR1)*",
+                                                                  "Ghost Pine (NEP1)*"="Ghost Pine (NEP1)*",
+                                                                  "BUL1 Bull Creek (BUL1)*"="BUL1 Bull Creek (BUL1)*",
+                                                                  "Enmax Taber (TAB1)*"="Enmax Taber (TAB1)*",
+                                                                  "Castle Rock Ridge 2 (CRR2)*"="Castle Rock Ridge 2 (CRR2)*",
+                                                                  "Cowley Ridge (CRE3)*"="Cowley Ridge (CRE3)*",
+                                                                  "Oldman 2 Wind Farm 1 (OWF1)*"="Oldman 2 Wind Farm 1 (OWF1)*",
+                                                                  "Suncor Chin Chute (SCR3)*"="Suncor Chin Chute (SCR3)*",
+                                                                  "Castle River #1 (CR1)*"="Castle River #1 (CR1)*",
+                                                                  "Suncor Magrath (SCR2)*"="Suncor Magrath (SCR2)*",
+                                                                  "Kettles Hill (KHW1)*"="Kettles Hill (KHW1)*",
+                                                                  "McBride Lake Windfarm (AKE1)*"="McBride Lake Windfarm (AKE1)*",
+                                                                  "Windrise (WRW1)*"="Windrise (WRW1)*",
+                                                                  "BUL2 Bull Creek (BUL2)*"="BUL2 Bull Creek (BUL2)*",
+                                                                  "Halkirk Wind Power Facility (HAL1)*"="Halkirk Wind Power Facility (HAL1)*",
+                                                                  "Riverview (RIV1)*"="Riverview (RIV1)*",
+                                                                  "Summerview 1 (IEW1)*"="Summerview 1 (IEW1)*",
+                                                                  "Whitla 2 (WHT2)*"="Whitla 2 (WHT2)*",
+                                                                  "Blackspring Ridge (BSR1)*"="Blackspring Ridge (BSR1)*",
+                                                                  "Summerview 2 (IEW2)*"="Summerview 2 (IEW2)*",
+                                                                  "Soderglen Wind  (GWW1)*"="Soderglen Wind  (GWW1)*",
+                                                                  "Ardenville Wind (ARD1)*"="Ardenville Wind (ARD1)*",
+                                                                  "Whitla 1 (WHT1)*"="Whitla 1 (WHT1)*",
+                                                                  "Wintering Hills (SCR4)*"="Wintering Hills (SCR4)*",
+                                                                  "Rattlesnake Ridge Wind (RTL1)*"="Rattlesnake Ridge Wind (RTL1)*",
+                                                                  "Castle Rock Wind Farm (CRR1)*"="Castle Rock Wind Farm (CRR1)*"
+                                                                ), selected = "Castle Rock Wind Farm (CRR1)*"))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ab_11 == 1",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_11_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_11 == 6",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_11_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_11 == 3",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_11_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_11 == 4",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_11_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_11 == 5",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_11_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Biomass", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_12", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_12 != 1",sliderInput("ab_dates_12",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d"))),
+                                  column(width = 2, selectInput("ab_ind_12_ff", h4("Select Asset"), 
+                                                                choices = list(
+                                                                  "Taylor Hydro (TAY1)" = "Taylor Hydro (TAY1)",
+                                                                  "Bow River Hydro (BOW1)" = "Bow River Hydro (BOW1)",
+                                                                  "Bighorn Hydro (BIG)" = "Bighorn Hydro (BIG)",
+                                                                  "Raymond Reservoir (RYMD)" = "Raymond Reservoir (RYMD)",
+                                                                  "Oldman River (OMRH)" = "Oldman River (OMRH)",
+                                                                  "Dickson Dam (DKSN)" = "Dickson Dam (DKSN)",
+                                                                  "Irrican Hydro (ICP1)" = "Irrican Hydro (ICP1)",
+                                                                  "Brazeau Hydro (BRA)" = "Brazeau Hydro (BRA)",
+                                                                  "Chin Chute (CHIN)" = "Chin Chute (CHIN)"
+                                                                ), selected = "Chin Chute (CHIN)"))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ab_12 == 1",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_12_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_12 == 6",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_12_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_12 == 3",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_12_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_12 == 4",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_12_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_12 == 5",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_12_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Dual", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_13", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_13 != 1",sliderInput("ab_dates_13",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d"))),
+                                  column(width = 2, selectInput("ab_ind_13_ff", h4("Select Asset"), 
+                                                                choices = list(
+                                                                  "Taylor Hydro (TAY1)" = "Taylor Hydro (TAY1)",
+                                                                  "Bow River Hydro (BOW1)" = "Bow River Hydro (BOW1)",
+                                                                  "Bighorn Hydro (BIG)" = "Bighorn Hydro (BIG)",
+                                                                  "Raymond Reservoir (RYMD)" = "Raymond Reservoir (RYMD)",
+                                                                  "Oldman River (OMRH)" = "Oldman River (OMRH)",
+                                                                  "Dickson Dam (DKSN)" = "Dickson Dam (DKSN)",
+                                                                  "Irrican Hydro (ICP1)" = "Irrican Hydro (ICP1)",
+                                                                  "Brazeau Hydro (BRA)" = "Brazeau Hydro (BRA)",
+                                                                  "Chin Chute (CHIN)" = "Chin Chute (CHIN)"
+                                                                ), selected = "Chin Chute (CHIN)"))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ab_13 == 1",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_13_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_13 == 6",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_13_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_13 == 3",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_13_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_13 == 4",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_13_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_13 == 5",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_13_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              fluidRow(
+                column(width =10, offset = 2,
+                       box(
+                         title = "Coal", width = 10, status = "warning", solidHeader = TRUE,
+                         collapsible = TRUE,
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_14", h4("Select Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                                  column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_14 != 1",sliderInput("ab_dates_14",
+                                                                                                                                       "Dates",
+                                                                                                                                       min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
+                                                                                                                                       max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
+                                                                                                                                       value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
+                                                                                                                                       timeFormat="%Y-%m-%d"))),
+                                  column(width = 2, selectInput("ab_ind_14_ff", h4("Select Asset"), 
+                                                                choices = list(
+                                                                  "Taylor Hydro (TAY1)" = "Taylor Hydro (TAY1)",
+                                                                  "Bow River Hydro (BOW1)" = "Bow River Hydro (BOW1)",
+                                                                  "Bighorn Hydro (BIG)" = "Bighorn Hydro (BIG)",
+                                                                  "Raymond Reservoir (RYMD)" = "Raymond Reservoir (RYMD)",
+                                                                  "Oldman River (OMRH)" = "Oldman River (OMRH)",
+                                                                  "Dickson Dam (DKSN)" = "Dickson Dam (DKSN)",
+                                                                  "Irrican Hydro (ICP1)" = "Irrican Hydro (ICP1)",
+                                                                  "Brazeau Hydro (BRA)" = "Brazeau Hydro (BRA)",
+                                                                  "Chin Chute (CHIN)" = "Chin Chute (CHIN)"
+                                                                ), selected = "Chin Chute (CHIN)"))
+                         ),
+                         conditionalPanel( condition = "input.select_fr_ab_14 == 1",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_14_YEARLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_14 == 6",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_14_ALL"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_14 == 3",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_14_WEEKLY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_14 == 4",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_14_DAILY"),type = "html", loader = "loader3"))),
+                         conditionalPanel( condition = "input.select_fr_ab_14 == 5",
+                                           fluidRow(withLoader(highchartOutput("AB_ENE_14_HOURLY"),type = "html", loader = "loader3"))),
+                         fluidRow(
+                           column(width = 10, helpText("Note: Selecting longer date range or frequency like daily, hourly can take longer time to render graphs.")),
+                           column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
+                         )
+                       ))),
+              
+              
+              
+              
+              
+      ),
       tabItem(tabName = "BC",
               fluidRow(
                 column(width =10, offset = 2,
@@ -1196,12 +1511,14 @@ color: green;
                 box(
                   title = "NovaScotia",status = "success", solidHeader = TRUE,collapsible = TRUE,
                   column(width = 6,
-                         dateRangeInput("ns_date_range", h5("Date range")),
-                         actionButton("ns_filter", "Apply")
+                        conditionalPanel( condition = "input.radio_ns == 1 || input.radio_ns == 0",dateRangeInput("ns_date_range", h5("Date range_1"))),
+                        conditionalPanel( condition = "input.radio_ns == 2",dateRangeInput("ns_date_range_1", h5("Date range_2"))),
+                        conditionalPanel( condition = "input.radio_ns == 1 || input.radio_ns == 0",actionButton("ns_filter", "Apply")),
+                        conditionalPanel( condition = "input.radio_ns == 2", actionButton("ns_filter_1","Apply"))
                   ),
                   column(offset = 0.7,width = 6,
                          fluidRow(radioButtons("radio_ns", h3("Tables"),
-                                               choices = list("None" = 0,"ns_realtime_load_novascotia_utc" = 1,"ns_realtime_trade_novascotia_utc" = 2),selected = 0)),
+                                               choices = list("None" = 0, "ns_realtime_load_novascotia_utc" = 1,"ns_realtime_trade_novascotia_utc" = 2),selected = 0)),
                          conditionalPanel( condition = "input.radio_ns == 1",
                                            fluidRow(downloadButton("data_ns_1", "Download Data"))),
                          conditionalPanel( condition = "input.radio_ns == 0",
@@ -1214,14 +1531,100 @@ color: green;
                 box(
                   title = "Alberta",status = "success", solidHeader = TRUE,collapsible = TRUE,
                   column(width = 6,
-                         dateRangeInput("ab_date_range", h5("Date range")),
-                         actionButton("ab_filter", "Apply")
+                         conditionalPanel( condition = "input.radio_ab == 1 || input.radio_ab == 0",dateRangeInput("ab_date_range", h5("Date range_1"))),
+                         conditionalPanel( condition = "input.radio_ab == 1 || input.radio_ab == 0",actionButton("ab_filter", "Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 2",dateRangeInput("ab_date_range_1", h5("Date range_2"))),
+                         conditionalPanel( condition = "input.radio_ab == 2", actionButton("ab_filter_1","Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 3",dateRangeInput("ab_date_range_2", h5("Date range_3"))),
+                         conditionalPanel( condition = "input.radio_ab == 3",actionButton("ab_filter_2", "Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 4",dateRangeInput("ab_date_range_3", h5("Date range_4"))),
+                         conditionalPanel( condition = "input.radio_ab == 4", actionButton("ab_filter_3","Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 5",dateRangeInput("ab_date_range_4", h5("Date range_5"))),
+                         conditionalPanel( condition = "input.radio_ab == 5",actionButton("ab_filter_4", "Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 6",dateRangeInput("ab_date_range_5", h5("Date range_6"))),
+                         conditionalPanel( condition = "input.radio_ab == 6", actionButton("ab_filter_5","Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 7",dateRangeInput("ab_date_range_6", h5("Date range_7"))),
+                         conditionalPanel( condition = "input.radio_ab == 7",actionButton("ab_filter_6", "Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 8",dateRangeInput("ab_date_range_7", h5("Date range_8"))),
+                         conditionalPanel( condition = "input.radio_ab == 8", actionButton("ab_filter_7","Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 9",dateRangeInput("ab_date_range_8", h5("Date range_9"))),
+                         conditionalPanel( condition = "input.radio_ab == 9",actionButton("ab_filter_8", "Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 10",dateRangeInput("ab_date_range_9", h5("Date range_10"))),
+                         conditionalPanel( condition = "input.radio_ab == 10", actionButton("ab_filter_9","Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 11",dateRangeInput("ab_date_range_10", h5("Date range_11"))),
+                         conditionalPanel( condition = "input.radio_ab == 11",actionButton("ab_filter_10", "Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 12",dateRangeInput("ab_date_range_11", h5("Date range_12"))),
+                         conditionalPanel( condition = "input.radio_ab == 12", actionButton("ab_filter_11","Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 13",dateRangeInput("ab_date_range_12", h5("Date range_13"))),
+                         conditionalPanel( condition = "input.radio_ab == 13",actionButton("ab_filter_12", "Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 14",dateRangeInput("ab_date_range_13", h5("Date range_14"))),
+                         conditionalPanel( condition = "input.radio_ab == 14", actionButton("ab_filter_13","Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_ab == 15",dateRangeInput("ab_date_range_14", h5("Date range_15"))),
+                         conditionalPanel( condition = "input.radio_ab == 15", actionButton("ab_filter_14","Apply"))
                   ),
                   column(offset = 0.7,width = 6,
                          radioButtons("radio_ab", h3("Tables"),
-                                      choices = list("None" = 0,"nb_realtime_alldata_new_brunswick_utc" = 1),selected = 0),
+                                      choices = list("None" = 0,
+                                                     "ab_hourly_demand_utc" = 1,
+                                                     "ab_test_3" = 2,
+                                                     "ab_test_4" = 3,
+                                                     "ab_test_5_summary" = 4,
+                                                     "ab_test_5_generation" = 5,
+                                                     "ab_test_5_interchange" = 6,
+                                                     "ab_test_5_gas" = 7,
+                                                     "ab_test_5_hydro" = 8,
+                                                     "ab_test_5_storage" = 9,
+                                                     "ab_test_5_solar" = 10,
+                                                     "ab_test_5_wind" = 11,
+                                                     "ab_test_5_biomass" = 12,
+                                                     "ab_test_5_dual" = 13,
+                                                     "ab_test_5_coal" = 14,
+                                                     "ab_hourly_zonal_demand_hist_utc" = 15
+                                                     ),selected = 0),
                          conditionalPanel( condition = "input.radio_ab == 1",
                                            downloadButton("data_ab", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 2",
+                                           downloadButton("data_ab_1", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 3",
+                                           downloadButton("data_ab_2", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 4",
+                                           downloadButton("data_ab_3", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 5",
+                                           downloadButton("data_ab_4", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 6",
+                                           downloadButton("data_ab_5", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 7",
+                                           downloadButton("data_ab_6", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 8",
+                                           downloadButton("data_ab_7", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 9",
+                                           downloadButton("data_ab_8", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 10",
+                                           downloadButton("data_ab_9", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 11",
+                                           downloadButton("data_ab_10", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 12",
+                                           downloadButton("data_ab_11", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 13",
+                                           downloadButton("data_ab_12", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 14",
+                                           downloadButton("data_ab_13", "Download Data")),
+                         conditionalPanel( condition = "input.radio_ab == 15",
+                                           downloadButton("data_ab_14", "Download Data")),
                          conditionalPanel( condition = "input.radio_ab == 0",
                                            helpText("Note: Please Select a File to Download"))
                   )
@@ -1230,12 +1633,19 @@ color: green;
                 box(
                   title = "British Coloumbia",status = "success", solidHeader = TRUE,collapsible = TRUE,
                   column(width = 6,
-                         dateRangeInput("bc_date_range", h5("Date range")),
-                         actionButton("bc_filter", "Apply")
+                         conditionalPanel( condition = "input.radio_bc == 1 || input.radio_bc == 0",dateRangeInput("bc_date_range", h5("Date range_1"))),
+                         conditionalPanel( condition = "input.radio_bc == 1 || input.radio_bc == 0",actionButton("bc_filter", "Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_bc == 2",dateRangeInput("bc_date_range_1", h5("Date range_2"))),
+                         conditionalPanel( condition = "input.radio_bc == 2", actionButton("bc_filter_1","Apply")),
+                         
                   ),
                   column(offset = 0.7,width = 6,
                          fluidRow(radioButtons("radio_bc", h3("Tables"),
-                                               choices = list("None" = 0,"ns_realtime_load_novascotia_utc" = 1,"ns_realtime_trade_novascotia_utc" = 2),selected = 0)),
+                                               choices = list("None" = 0,
+                                                              "bc_hourly_table_1_rted_utc" = 1,
+                                                              "bc_hourly_table_3_rted_utc" = 2
+                                                              ),selected = 0)),
                          conditionalPanel( condition = "input.radio_bc == 1",
                                            fluidRow(downloadButton("data_bc_1", "Download Data"))),
                          conditionalPanel( condition = "input.radio_bc == 0",
@@ -1253,7 +1663,7 @@ color: green;
                   ),
                   column(offset = 0.7,width = 6,
                          radioButtons("radio_on", h3("Tables"),
-                                      choices = list("None" = 0,"nb_realtime_alldata_new_brunswick_utc" = 1),selected = 0),
+                                      choices = list("None" = 0,"Ontario_Load_RTED" = 1),selected = 0),
                          conditionalPanel( condition = "input.radio_on == 1",
                                            downloadButton("data_on", "Download Data")),
                          conditionalPanel( condition = "input.radio_on == 0",
@@ -1269,15 +1679,57 @@ color: green;
                   ),
                   column(offset = 0.7,width = 6,
                          fluidRow(radioButtons("radio_pei", h3("Tables"),
-                                               choices = list("None" = 0,"ns_realtime_load_novascotia_utc" = 1,"ns_realtime_trade_novascotia_utc" = 2),selected = 0)),
+                                               choices = list("None" = 0,"pei_rted" = 1),selected = 0)),
                          conditionalPanel( condition = "input.radio_pei == 1",
                                            fluidRow(downloadButton("data_pei_1", "Download Data"))),
                          conditionalPanel( condition = "input.radio_pei == 0",
                                            fluidRow(helpText("Note: Please Select a File to Download"))),
-                         conditionalPanel( condition = "input.radio_pei == 2",
-                                           fluidRow(downloadButton("data_pei_2", "Download Data")))
+                         )
+                )),
+              fluidRow(
+                box(
+                  title = "NewFoundland & Labrador",status = "success", solidHeader = TRUE,collapsible = TRUE,
+                  column(width = 6,
+                         dateRangeInput("nfl_date_range", h5("Date range")),
+                         actionButton("nfl_filter", "Apply")
+                  ),
+                  column(offset = 0.7,width = 6,
+                         radioButtons("radio_nfl", h3("Tables"),
+                                      choices = list("None" = 0,"NFL_rt_load" = 1),selected = 0),
+                         conditionalPanel( condition = "input.radio_nfl == 1",
+                                           downloadButton("data_nfl", "Download Data")),
+                         conditionalPanel( condition = "input.radio_nfl == 0",
+                                           helpText("Note: Please Select a File to Download"))
                   )
-                )))
+                  
+                ),
+                box(
+                  title = "Quebec",status = "success", solidHeader = TRUE,collapsible = TRUE,
+                  column(width = 6,
+                         conditionalPanel( condition = "input.radio_qb == 1 || input.radio_qb == 0",dateRangeInput("qb_date_range", h5("Date range_1"))),
+                         conditionalPanel( condition = "input.radio_qb == 1 || input.radio_qb == 0",actionButton("qb_filter", "Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_qb == 2",dateRangeInput("qb_date_range_1", h5("Date range_2"))),
+                         conditionalPanel( condition = "input.radio_qb == 2", actionButton("qb_filter_1","Apply")),
+                         
+                         conditionalPanel( condition = "input.radio_qb == 3",dateRangeInput("qb_date_range_2", h5("Date range_3"))),
+                         conditionalPanel( condition = "input.radio_qb == 3",actionButton("qb_filter_2", "Apply"))
+                         
+                  ),
+                  column(offset = 0.7,width = 6,
+                         fluidRow(radioButtons("radio_qb", h3("Tables"),
+                                               choices = list("None" = 0,"hfed_qb_quarterhour_demand" = 1,"hfed_qb_hourly_production" = 2,"hfed_qb_hourly_allvar_hist" = 3),selected = 0)),
+                         conditionalPanel( condition = "input.radio_qb == 1",
+                                           fluidRow(downloadButton("data_qb_1", "Download Data"))),
+                         conditionalPanel( condition = "input.radio_qb == 2",
+                                           fluidRow(downloadButton("data_qb_2", "Download Data"))),
+                         conditionalPanel( condition = "input.radio_qb == 3",
+                                           fluidRow(downloadButton("data_qb_3", "Download Data"))),
+                         conditionalPanel( condition = "input.radio_qb == 0",
+                                           fluidRow(helpText("Note: Please Select a File to Download")))
+                  )
+                ))
+      )
       
     ))  
 )
@@ -1354,20 +1806,21 @@ server <- function(input, output, session) {
   qb_ind_dat_1 <- tbl(con, config$provinces$QUEBEC$table2) %>% arrange(Date_time_local) %>% collect()
   qb_ind_dat_2 <- tbl(con, config$provinces$QUEBEC$table1) %>% arrange(Date_time_local) %>% collect()
   qb_ind_dat_3 <- tbl(con, config$provinces$QUEBEC$table3) %>% arrange(Date_time_local) %>% collect()
+  ab_ind_dat_8 <- tbl(con, config$provinces$AB$table8) %>% arrange(Update_Time)  %>% collect()
+  ab_ind_dat_9 <- tbl(con, config$provinces$AB$table9) %>% arrange(Update_Time) %>% collect()
+  ab_ind_dat_10 <- tbl(con, config$provinces$AB$table10) %>% arrange(Update_Time) %>% collect()
+  ab_ind_dat_11 <- tbl(con, config$provinces$AB$table11) %>% arrange(Update_Time) %>% collect()
+  ab_ind_dat_12 <- tbl(con, config$provinces$AB$table12) %>% arrange(Update_Time) %>% collect()
+  ab_ind_dat_13 <- tbl(con, config$provinces$AB$table13) %>% arrange(Update_Time) %>% collect()
+  ab_ind_dat_14 <- tbl(con, config$provinces$AB$table14) %>% arrange(Update_Time) %>% collect()
+  
   #ab_ind_dat_1 <- tbl(con, config$provinces$AB$table1) %>% arrange(Date_time_local) %>% collect()
-  #ab_ind_dat_2 <- tbl(con, config$provinces$AB$table2) %>% arrange(Date_time_local) %>% collect()
+  ab_ind_dat_2 <- tbl(con, config$provinces$AB$table2) %>% arrange(Date) %>% collect()
   #ab_ind_dat_3 <- tbl(con, config$provinces$AB$table3) %>% arrange(Date_time_local) %>% collect()
   #ab_ind_dat_4 <- tbl(con, config$provinces$AB$table4) %>% arrange(Date_time_local) %>% collect()
   #ab_ind_dat_5 <- tbl(con, config$provinces$AB$table5) %>% arrange(Date_time_local) %>% collect()
   #ab_ind_dat_6 <- tbl(con, config$provinces$AB$table6) %>% arrange(Date_time_local) %>% collect()
   #ab_ind_dat_7 <- tbl(con, config$provinces$AB$table7) %>% arrange(Date_time_local) %>% collect()
-  #ab_ind_dat_8 <- tbl(con, config$provinces$AB$table8) %>% arrange(Date_time_local) %>% collect()
-  #ab_ind_dat_9 <- tbl(con, config$provinces$AB$table9) %>% arrange(Date_time_local) %>% collect()
-  #ab_ind_dat_10 <- tbl(con, config$provinces$AB$table10) %>% arrange(Date_time_local) %>% collect()
-  #ab_ind_dat_11 <- tbl(con, config$provinces$AB$table11) %>% arrange(Date_time_local) %>% collect()
-  #ab_ind_dat_12 <- tbl(con, config$provinces$AB$table12) %>% arrange(Date_time_local) %>% collect()
-  #ab_ind_dat_13 <- tbl(con, config$provinces$AB$table13) %>% arrange(Date_time_local) %>% collect()
-  #ab_ind_dat_14 <- tbl(con, config$provinces$AB$table14) %>% arrange(Date_time_local) %>% collect()
   
   
   output$timer <- renderText({invalidateLater(1000, session)
@@ -1387,12 +1840,12 @@ server <- function(input, output, session) {
   if(nbload_data_mean_prcnt() < 0){
     removeClass("nbmean","green_output")
     addClass("nbmean","red_output")
-    output$NB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(nbload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    output$NB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(nbload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
   }
   if(nbload_data_mean_prcnt() > 0){
     removeClass("nbmean","red_output")
     addClass("nbmean","green_output")
-    output$NB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(nbload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+    output$NB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(nbload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
   }})
   nbload_subset <- reactive({subset(nbload_data(),subset = nbload_data()$Date_time_local >= previous_time_1)})
   nb_load_ts <-  reactive({xts(nbload_subset()$nb_load,nbload_subset()$Date_time_local)})
@@ -1418,12 +1871,12 @@ server <- function(input, output, session) {
     if(nsload_data_mean_prcnt() < 0){
       removeClass("nsmean","green_output")
       addClass("nsmean","red_output")
-      output$NS_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(nsload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$NS_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(nsload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }
     if(nsload_data_mean_prcnt() > 0){
       removeClass("nsmean","red_output")
       addClass("nsmean","green_output")
-      output$NS_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(nsload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$NS_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(nsload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }})
   nsload_subset <- reactive({subset(nsload_data(),subset = nsload_data()$Date_time_local >= previous_time_1)})
   ns_load_ts <-  reactive({xts(nsload_subset()$Net_Load,nsload_subset()$Date_time_local)})
@@ -1460,12 +1913,12 @@ server <- function(input, output, session) {
     if(onload_data_mean_prcnt() < 0){
       removeClass("onmean","green_output")
       addClass("onmean","red_output")
-      output$ON_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(onload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$ON_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(onload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }
     if(onload_data_mean_prcnt() > 0){
       removeClass("onmean","red_output")
       addClass("onmean","green_output")
-      output$ON_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(onload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$ON_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(onload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }})
   
   onload_subset <- reactive({subset(onload_data(),subset = onload_data()$date_time_local >= previous_time_1)})
@@ -1490,12 +1943,12 @@ server <- function(input, output, session) {
     if(peiload_data_mean_prcnt() < 0){
       removeClass("peimean","green_output")
       addClass("peimean","red_output")
-      output$PEI_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(peiload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$PEI_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(peiload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }
     if(peiload_data_mean_prcnt() > 0){
       removeClass("peimean","red_output")
       addClass("peimean","green_output")
-      output$PEI_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(peiload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$PEI_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(peiload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }})
   
   peiload_subset <- reactive({subset(peiload_data(),subset = peiload_data()$Date_time_local >= previous_time_1)})
@@ -1520,12 +1973,12 @@ server <- function(input, output, session) {
     if(nflload_data_mean_prcnt() < 0){
       removeClass("nflmean","green_output")
       addClass("nflmean","red_output")
-      output$NFL_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(nflload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$NFL_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(nflload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }
     if(nflload_data_mean_prcnt() > 0){
       removeClass("nflmean","red_output")
       addClass("nflmean","green_output")
-      output$NFL_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(nflload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$NFL_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(nflload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }})
   
   nflload_subset <- reactive({subset(nflload_data(),subset = nflload_data()$Date_time_local >= previous_time_1)})
@@ -1550,12 +2003,12 @@ server <- function(input, output, session) {
     if(qbload_data_mean_prcnt() < 0){
       removeClass("qbmean","green_output")
       addClass("qbmean","red_output")
-      output$QB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(qbload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$QB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-down'>",round(qbload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }
     if(qbload_data_mean_prcnt() > 0){
       removeClass("qbmean","red_output")
       addClass("qbmean","green_output")
-      output$QB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(qbload_data_mean_prcnt(),digits = 2),"% in last 5 Minutes</i></h4>"))})
+      output$QB_MEAN <- renderUI({HTML(paste("<h4><i class='fa fa-arrow-up'>",round(qbload_data_mean_prcnt(),digits = 2),"% in last Hour</i></h4>"))})
     }})
   
   qbload_subset <- reactive({subset(qbload_data(),subset = qbload_data()$Date_time_local >= previous_time_1)})
@@ -3304,15 +3757,572 @@ server <- function(input, output, session) {
       hc_add_series(qb_data_energy_subset_ts_12_1(), type = "line", name = "High Load: ", color = "green")
   })
   
-  ab_date_ind_5_1 <- reactive({paste(input$ab_dates_1[1],"00:00:00",sep = " ")})
-  ab_date_ind_5_2 <- reactive({paste(input$ab_dates_1[2],"00:00:00",sep = " ")})
   
   
+  
+  
+  
+  ab_date_ind_8_1 <- reactive({paste(input$ab_dates_8[1],"00:00:00",sep = " ")})
+  ab_date_ind_8_2 <- reactive({paste(input$ab_dates_8[2],"00:00:00",sep = " ")})
+  ab_ind_dat_8_asset_filter <- reactive({input$ab_ind_8_ff})
+  
+  ab_ind_dat_8_sub_1 <- reactive({subset(ab_ind_dat_8,subset = (ab_ind_dat_8$Update_Time >= ab_date_ind_8_1() & ab_ind_dat_8$Update_Time <= ab_date_ind_8_2()))})
+  ab_ind_dat_8_sub_2 <- reactive({subset(ab_ind_dat_8_sub_1(),subset = (ab_ind_dat_8_sub_1()$ASSET == ab_ind_dat_8_asset_filter()))})
+  
+  ab_ind_dat_8_sub_1_xts_1_1 <- reactive({xts(ab_ind_dat_8_sub_2()$MC,ab_ind_dat_8_sub_2()$Update_Time)})
+  ab_ind_dat_8_sub_1_xts_1_2 <- reactive({xts(ab_ind_dat_8_sub_2()$TNG,ab_ind_dat_8_sub_2()$Update_Time)})
+  ab_ind_dat_8_sub_1_xts_1_3 <- reactive({xts(ab_ind_dat_8_sub_2()$DCR,ab_ind_dat_8_sub_2()$Update_Time)})
+  
+  ab_ind_dat_8_sub_1_xts_2_1 <- reactive({xts(ab_ind_dat_8_sub_1()$MC,ab_ind_dat_8_sub_1()$Update_Time)})
+  ab_ind_dat_8_sub_1_xts_2_2 <- reactive({xts(ab_ind_dat_8_sub_1()$TNG,ab_ind_dat_8_sub_1()$Update_Time)})
+  ab_ind_dat_8_sub_1_xts_2_3 <- reactive({xts(ab_ind_dat_8_sub_1()$DCR,ab_ind_dat_8_sub_1()$Update_Time)})
+  
+  ab_ind_dat_8_sub_1_xts_1_1_yearly_1 <- reactive({to.yearly(ab_ind_dat_8_sub_1_xts_2_1())})
+  ab_ind_dat_8_sub_1_xts_1_1_yearly_2 <- reactive({to.yearly(ab_ind_dat_8_sub_1_xts_2_2())})
+  ab_ind_dat_8_sub_1_xts_1_1_yearly_3 <- reactive({to.yearly(ab_ind_dat_8_sub_1_xts_2_3())})
+  ab_ind_dat_8_sub_1_xts_1_1_monthly_1 <- reactive({to.monthly(ab_ind_dat_8_sub_1_xts_1_1())})
+  ab_ind_dat_8_sub_1_xts_1_1_monthly_2 <- reactive({to.monthly(ab_ind_dat_8_sub_1_xts_1_2())})
+  ab_ind_dat_8_sub_1_xts_1_1_monthly_3 <- reactive({to.monthly(ab_ind_dat_8_sub_1_xts_1_3())})
+  ab_ind_dat_8_sub_1_xts_1_1_weekly_1 <- reactive({to.weekly(ab_ind_dat_8_sub_1_xts_1_1())})
+  ab_ind_dat_8_sub_1_xts_1_1_weekly_2 <- reactive({to.weekly(ab_ind_dat_8_sub_1_xts_1_2())})
+  ab_ind_dat_8_sub_1_xts_1_1_weekly_3 <- reactive({to.weekly(ab_ind_dat_8_sub_1_xts_1_3())})
+  ab_ind_dat_8_sub_1_xts_1_1_daily_1 <- reactive({to.daily(ab_ind_dat_8_sub_1_xts_1_1())})
+  ab_ind_dat_8_sub_1_xts_1_1_daily_2 <- reactive({to.daily(ab_ind_dat_8_sub_1_xts_1_2())})
+  ab_ind_dat_8_sub_1_xts_1_1_daily_3 <- reactive({to.daily(ab_ind_dat_8_sub_1_xts_1_3())})
+  ab_ind_dat_8_sub_1_xts_1_1_hourly_1 <- reactive({to.hourly(ab_ind_dat_8_sub_1_xts_1_1())})
+  ab_ind_dat_8_sub_1_xts_1_1_hourly_2 <- reactive({to.hourly(ab_ind_dat_8_sub_1_xts_1_2())})
+  ab_ind_dat_8_sub_1_xts_1_1_hourly_3 <- reactive({to.hourly(ab_ind_dat_8_sub_1_xts_1_3())})
+  
+  output$AB_ENE_8_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_8_sub_1_xts_2_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_8_sub_1_xts_2_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_8_sub_1_xts_2_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_8_sub_1_xts_2_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_8_sub_1_xts_2_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_8_sub_1_xts_2_3().Low'))], type = "line", name = "Low DCR ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_8_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_8_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_8_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_8_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_8_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_8_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_8_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_8_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_8_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_8_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_8_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_8_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_8_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_8_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_8_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_8_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_8_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_8_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_8_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_8_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_8_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_8_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_8_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_1(), type = "line", name = "MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_2(), type = "line", name = "TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_8_sub_1_xts_1_3(), type = "line", name = "DCR", color = "green")
+  })
+  
+  ab_date_ind_9_1 <- reactive({paste(input$ab_dates_9[1],"00:00:00",sep = " ")})
+  ab_date_ind_9_2 <- reactive({paste(input$ab_dates_9[2],"00:00:00",sep = " ")})
+  ab_ind_dat_9_asset_filter <- reactive({input$ab_ind_9_ff})
+  
+  ab_ind_dat_9_sub_1 <- reactive({subset(ab_ind_dat_9,subset = (ab_ind_dat_9$Update_Time >= ab_date_ind_9_1() & ab_ind_dat_9$Update_Time <= ab_date_ind_9_2()))})
+  ab_ind_dat_9_sub_2 <- reactive({subset(ab_ind_dat_9_sub_1(),subset = (ab_ind_dat_9_sub_1()$ASSET == ab_ind_dat_9_asset_filter()))})
+  
+  ab_ind_dat_9_sub_1_xts_1_1 <- reactive({xts(ab_ind_dat_9_sub_2()$MC,ab_ind_dat_9_sub_2()$Update_Time)})
+  ab_ind_dat_9_sub_1_xts_1_2 <- reactive({xts(ab_ind_dat_9_sub_2()$TNG,ab_ind_dat_9_sub_2()$Update_Time)})
+  ab_ind_dat_9_sub_1_xts_1_3 <- reactive({xts(ab_ind_dat_9_sub_2()$DCR,ab_ind_dat_9_sub_2()$Update_Time)})
+  
+  ab_ind_dat_9_sub_1_xts_2_1 <- reactive({xts(ab_ind_dat_9_sub_1()$MC,ab_ind_dat_9_sub_1()$Update_Time)})
+  ab_ind_dat_9_sub_1_xts_2_2 <- reactive({xts(ab_ind_dat_9_sub_1()$TNG,ab_ind_dat_9_sub_1()$Update_Time)})
+  ab_ind_dat_9_sub_1_xts_2_3 <- reactive({xts(ab_ind_dat_9_sub_1()$DCR,ab_ind_dat_9_sub_1()$Update_Time)})
+  
+  ab_ind_dat_9_sub_1_xts_1_1_yearly_1 <- reactive({to.yearly(ab_ind_dat_9_sub_1_xts_2_1())})
+  ab_ind_dat_9_sub_1_xts_1_1_yearly_2 <- reactive({to.yearly(ab_ind_dat_9_sub_1_xts_2_2())})
+  ab_ind_dat_9_sub_1_xts_1_1_yearly_3 <- reactive({to.yearly(ab_ind_dat_9_sub_1_xts_2_3())})
+  ab_ind_dat_9_sub_1_xts_1_1_monthly_1 <- reactive({to.monthly(ab_ind_dat_9_sub_1_xts_1_1())})
+  ab_ind_dat_9_sub_1_xts_1_1_monthly_2 <- reactive({to.monthly(ab_ind_dat_9_sub_1_xts_1_2())})
+  ab_ind_dat_9_sub_1_xts_1_1_monthly_3 <- reactive({to.monthly(ab_ind_dat_9_sub_1_xts_1_3())})
+  ab_ind_dat_9_sub_1_xts_1_1_weekly_1 <- reactive({to.weekly(ab_ind_dat_9_sub_1_xts_1_1())})
+  ab_ind_dat_9_sub_1_xts_1_1_weekly_2 <- reactive({to.weekly(ab_ind_dat_9_sub_1_xts_1_2())})
+  ab_ind_dat_9_sub_1_xts_1_1_weekly_3 <- reactive({to.weekly(ab_ind_dat_9_sub_1_xts_1_3())})
+  ab_ind_dat_9_sub_1_xts_1_1_daily_1 <- reactive({to.daily(ab_ind_dat_9_sub_1_xts_1_1())})
+  ab_ind_dat_9_sub_1_xts_1_1_daily_2 <- reactive({to.daily(ab_ind_dat_9_sub_1_xts_1_2())})
+  ab_ind_dat_9_sub_1_xts_1_1_daily_3 <- reactive({to.daily(ab_ind_dat_9_sub_1_xts_1_3())})
+  ab_ind_dat_9_sub_1_xts_1_1_hourly_1 <- reactive({to.hourly(ab_ind_dat_9_sub_1_xts_1_1())})
+  ab_ind_dat_9_sub_1_xts_1_1_hourly_2 <- reactive({to.hourly(ab_ind_dat_9_sub_1_xts_1_2())})
+  ab_ind_dat_9_sub_1_xts_1_1_hourly_3 <- reactive({to.hourly(ab_ind_dat_9_sub_1_xts_1_3())})
+  
+  output$AB_ENE_9_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_9_sub_1_xts_2_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_9_sub_1_xts_2_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_9_sub_1_xts_2_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_9_sub_1_xts_2_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_9_sub_1_xts_2_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_9_sub_1_xts_2_3().Low'))], type = "line", name = "Low DCR ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_9_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_9_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_9_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_9_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_9_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_9_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_9_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_9_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_9_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_9_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_9_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_9_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_9_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_9_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_9_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_9_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_9_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_9_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_9_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_9_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_9_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_9_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_9_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_1(), type = "line", name = "MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_2(), type = "line", name = "TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_9_sub_1_xts_1_3(), type = "line", name = "DCR", color = "green")
+  })
+  
+  ab_date_ind_10_1 <- reactive({paste(input$ab_dates_10[1],"00:00:00",sep = " ")})
+  ab_date_ind_10_2 <- reactive({paste(input$ab_dates_10[2],"00:00:00",sep = " ")})
+  ab_ind_dat_10_asset_filter <- reactive({input$ab_ind_10_ff})
+  
+  ab_ind_dat_10_sub_1 <- reactive({subset(ab_ind_dat_10,subset = (ab_ind_dat_10$Update_Time >= ab_date_ind_10_1() & ab_ind_dat_10$Update_Time <= ab_date_ind_10_2()))})
+  ab_ind_dat_10_sub_2 <- reactive({subset(ab_ind_dat_10_sub_1(),subset = (ab_ind_dat_10_sub_1()$ASSET == ab_ind_dat_10_asset_filter()))})
+  
+  ab_ind_dat_10_sub_1_xts_1_1 <- reactive({xts(ab_ind_dat_10_sub_2()$MC,ab_ind_dat_10_sub_2()$Update_Time)})
+  ab_ind_dat_10_sub_1_xts_1_2 <- reactive({xts(ab_ind_dat_10_sub_2()$TNG,ab_ind_dat_10_sub_2()$Update_Time)})
+  ab_ind_dat_10_sub_1_xts_1_3 <- reactive({xts(ab_ind_dat_10_sub_2()$DCR,ab_ind_dat_10_sub_2()$Update_Time)})
+  
+  ab_ind_dat_10_sub_1_xts_2_1 <- reactive({xts(ab_ind_dat_10_sub_1()$MC,ab_ind_dat_10_sub_1()$Update_Time)})
+  ab_ind_dat_10_sub_1_xts_2_2 <- reactive({xts(ab_ind_dat_10_sub_1()$TNG,ab_ind_dat_10_sub_1()$Update_Time)})
+  ab_ind_dat_10_sub_1_xts_2_3 <- reactive({xts(ab_ind_dat_10_sub_1()$DCR,ab_ind_dat_10_sub_1()$Update_Time)})
+  
+  ab_ind_dat_10_sub_1_xts_1_1_yearly_1 <- reactive({to.yearly(ab_ind_dat_10_sub_1_xts_2_1())})
+  ab_ind_dat_10_sub_1_xts_1_1_yearly_2 <- reactive({to.yearly(ab_ind_dat_10_sub_1_xts_2_2())})
+  ab_ind_dat_10_sub_1_xts_1_1_yearly_3 <- reactive({to.yearly(ab_ind_dat_10_sub_1_xts_2_3())})
+  ab_ind_dat_10_sub_1_xts_1_1_monthly_1 <- reactive({to.monthly(ab_ind_dat_10_sub_1_xts_1_1())})
+  ab_ind_dat_10_sub_1_xts_1_1_monthly_2 <- reactive({to.monthly(ab_ind_dat_10_sub_1_xts_1_2())})
+  ab_ind_dat_10_sub_1_xts_1_1_monthly_3 <- reactive({to.monthly(ab_ind_dat_10_sub_1_xts_1_3())})
+  ab_ind_dat_10_sub_1_xts_1_1_weekly_1 <- reactive({to.weekly(ab_ind_dat_10_sub_1_xts_1_1())})
+  ab_ind_dat_10_sub_1_xts_1_1_weekly_2 <- reactive({to.weekly(ab_ind_dat_10_sub_1_xts_1_2())})
+  ab_ind_dat_10_sub_1_xts_1_1_weekly_3 <- reactive({to.weekly(ab_ind_dat_10_sub_1_xts_1_3())})
+  ab_ind_dat_10_sub_1_xts_1_1_daily_1 <- reactive({to.daily(ab_ind_dat_10_sub_1_xts_1_1())})
+  ab_ind_dat_10_sub_1_xts_1_1_daily_2 <- reactive({to.daily(ab_ind_dat_10_sub_1_xts_1_2())})
+  ab_ind_dat_10_sub_1_xts_1_1_daily_3 <- reactive({to.daily(ab_ind_dat_10_sub_1_xts_1_3())})
+  ab_ind_dat_10_sub_1_xts_1_1_hourly_1 <- reactive({to.hourly(ab_ind_dat_10_sub_1_xts_1_1())})
+  ab_ind_dat_10_sub_1_xts_1_1_hourly_2 <- reactive({to.hourly(ab_ind_dat_10_sub_1_xts_1_2())})
+  ab_ind_dat_10_sub_1_xts_1_1_hourly_3 <- reactive({to.hourly(ab_ind_dat_10_sub_1_xts_1_3())})
+  
+  output$AB_ENE_10_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_10_sub_1_xts_2_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_10_sub_1_xts_2_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_10_sub_1_xts_2_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_10_sub_1_xts_2_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_10_sub_1_xts_2_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_10_sub_1_xts_2_3().Low'))], type = "line", name = "Low DCR ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_10_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_10_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_10_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_10_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_10_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_10_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_10_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_10_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_10_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_10_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_10_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_10_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_10_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_10_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_10_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_10_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_10_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_10_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_10_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_10_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_10_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_10_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_10_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_1(), type = "line", name = "MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_2(), type = "line", name = "TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_10_sub_1_xts_1_3(), type = "line", name = "DCR", color = "green")
+  })
+  
+  ab_date_ind_11_1 <- reactive({paste(input$ab_dates_11[1],"00:00:00",sep = " ")})
+  ab_date_ind_11_2 <- reactive({paste(input$ab_dates_11[2],"00:00:00",sep = " ")})
+  ab_ind_dat_11_asset_filter <- reactive({input$ab_ind_11_ff})
+  
+  ab_ind_dat_11_sub_1 <- reactive({subset(ab_ind_dat_11,subset = (ab_ind_dat_11$Update_Time >= ab_date_ind_11_1() & ab_ind_dat_11$Update_Time <= ab_date_ind_11_2()))})
+  ab_ind_dat_11_sub_2 <- reactive({subset(ab_ind_dat_11_sub_1(),subset = (ab_ind_dat_11_sub_1()$ASSET == ab_ind_dat_11_asset_filter()))})
+  
+  ab_ind_dat_11_sub_1_xts_1_1 <- reactive({xts(ab_ind_dat_11_sub_2()$MC,ab_ind_dat_11_sub_2()$Update_Time)})
+  ab_ind_dat_11_sub_1_xts_1_2 <- reactive({xts(ab_ind_dat_11_sub_2()$TNG,ab_ind_dat_11_sub_2()$Update_Time)})
+  ab_ind_dat_11_sub_1_xts_1_3 <- reactive({xts(ab_ind_dat_11_sub_2()$DCR,ab_ind_dat_11_sub_2()$Update_Time)})
+  
+  ab_ind_dat_11_sub_1_xts_2_1 <- reactive({xts(ab_ind_dat_11_sub_1()$MC,ab_ind_dat_11_sub_1()$Update_Time)})
+  ab_ind_dat_11_sub_1_xts_2_2 <- reactive({xts(ab_ind_dat_11_sub_1()$TNG,ab_ind_dat_11_sub_1()$Update_Time)})
+  ab_ind_dat_11_sub_1_xts_2_3 <- reactive({xts(ab_ind_dat_11_sub_1()$DCR,ab_ind_dat_11_sub_1()$Update_Time)})
+  
+  ab_ind_dat_11_sub_1_xts_1_1_yearly_1 <- reactive({to.yearly(ab_ind_dat_11_sub_1_xts_2_1())})
+  ab_ind_dat_11_sub_1_xts_1_1_yearly_2 <- reactive({to.yearly(ab_ind_dat_11_sub_1_xts_2_2())})
+  ab_ind_dat_11_sub_1_xts_1_1_yearly_3 <- reactive({to.yearly(ab_ind_dat_11_sub_1_xts_2_3())})
+  ab_ind_dat_11_sub_1_xts_1_1_monthly_1 <- reactive({to.monthly(ab_ind_dat_11_sub_1_xts_1_1())})
+  ab_ind_dat_11_sub_1_xts_1_1_monthly_2 <- reactive({to.monthly(ab_ind_dat_11_sub_1_xts_1_2())})
+  ab_ind_dat_11_sub_1_xts_1_1_monthly_3 <- reactive({to.monthly(ab_ind_dat_11_sub_1_xts_1_3())})
+  ab_ind_dat_11_sub_1_xts_1_1_weekly_1 <- reactive({to.weekly(ab_ind_dat_11_sub_1_xts_1_1())})
+  ab_ind_dat_11_sub_1_xts_1_1_weekly_2 <- reactive({to.weekly(ab_ind_dat_11_sub_1_xts_1_2())})
+  ab_ind_dat_11_sub_1_xts_1_1_weekly_3 <- reactive({to.weekly(ab_ind_dat_11_sub_1_xts_1_3())})
+  ab_ind_dat_11_sub_1_xts_1_1_daily_1 <- reactive({to.daily(ab_ind_dat_11_sub_1_xts_1_1())})
+  ab_ind_dat_11_sub_1_xts_1_1_daily_2 <- reactive({to.daily(ab_ind_dat_11_sub_1_xts_1_2())})
+  ab_ind_dat_11_sub_1_xts_1_1_daily_3 <- reactive({to.daily(ab_ind_dat_11_sub_1_xts_1_3())})
+  ab_ind_dat_11_sub_1_xts_1_1_hourly_1 <- reactive({to.hourly(ab_ind_dat_11_sub_1_xts_1_1())})
+  ab_ind_dat_11_sub_1_xts_1_1_hourly_2 <- reactive({to.hourly(ab_ind_dat_11_sub_1_xts_1_2())})
+  ab_ind_dat_11_sub_1_xts_1_1_hourly_3 <- reactive({to.hourly(ab_ind_dat_11_sub_1_xts_1_3())})
+  
+  output$AB_ENE_11_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_11_sub_1_xts_2_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_11_sub_1_xts_2_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_11_sub_1_xts_2_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_11_sub_1_xts_2_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_11_sub_1_xts_2_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_11_sub_1_xts_2_3().Low'))], type = "line", name = "Low DCR ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_11_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_11_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_11_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_11_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_11_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_11_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_11_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_11_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_11_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_11_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_11_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_11_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_11_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_11_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_11_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_11_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_11_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_11_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_11_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_11_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_11_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_11_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_11_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_1(), type = "line", name = "MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_2(), type = "line", name = "TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_11_sub_1_xts_1_3(), type = "line", name = "DCR", color = "green")
+  })
+  
+  ab_date_ind_12_1 <- reactive({paste(input$ab_dates_12[1],"00:00:00",sep = " ")})
+  ab_date_ind_12_2 <- reactive({paste(input$ab_dates_12[2],"00:00:00",sep = " ")})
+  ab_ind_dat_12_asset_filter <- reactive({input$ab_ind_12_ff})
+  
+  ab_ind_dat_12_sub_1 <- reactive({subset(ab_ind_dat_12,subset = (ab_ind_dat_12$Update_Time >= ab_date_ind_12_1() & ab_ind_dat_12$Update_Time <= ab_date_ind_12_2()))})
+  ab_ind_dat_12_sub_2 <- reactive({subset(ab_ind_dat_12_sub_1(),subset = (ab_ind_dat_12_sub_1()$ASSET == ab_ind_dat_12_asset_filter()))})
+  
+  ab_ind_dat_12_sub_1_xts_1_1 <- reactive({xts(ab_ind_dat_12_sub_2()$MC,ab_ind_dat_12_sub_2()$Update_Time)})
+  ab_ind_dat_12_sub_1_xts_1_2 <- reactive({xts(ab_ind_dat_12_sub_2()$TNG,ab_ind_dat_12_sub_2()$Update_Time)})
+  ab_ind_dat_12_sub_1_xts_1_3 <- reactive({xts(ab_ind_dat_12_sub_2()$DCR,ab_ind_dat_12_sub_2()$Update_Time)})
+  
+  ab_ind_dat_12_sub_1_xts_2_1 <- reactive({xts(ab_ind_dat_12_sub_1()$MC,ab_ind_dat_12_sub_1()$Update_Time)})
+  ab_ind_dat_12_sub_1_xts_2_2 <- reactive({xts(ab_ind_dat_12_sub_1()$TNG,ab_ind_dat_12_sub_1()$Update_Time)})
+  ab_ind_dat_12_sub_1_xts_2_3 <- reactive({xts(ab_ind_dat_12_sub_1()$DCR,ab_ind_dat_12_sub_1()$Update_Time)})
+  
+  ab_ind_dat_12_sub_1_xts_1_1_yearly_1 <- reactive({to.yearly(ab_ind_dat_12_sub_1_xts_2_1())})
+  ab_ind_dat_12_sub_1_xts_1_1_yearly_2 <- reactive({to.yearly(ab_ind_dat_12_sub_1_xts_2_2())})
+  ab_ind_dat_12_sub_1_xts_1_1_yearly_3 <- reactive({to.yearly(ab_ind_dat_12_sub_1_xts_2_3())})
+  ab_ind_dat_12_sub_1_xts_1_1_monthly_1 <- reactive({to.monthly(ab_ind_dat_12_sub_1_xts_1_1())})
+  ab_ind_dat_12_sub_1_xts_1_1_monthly_2 <- reactive({to.monthly(ab_ind_dat_12_sub_1_xts_1_2())})
+  ab_ind_dat_12_sub_1_xts_1_1_monthly_3 <- reactive({to.monthly(ab_ind_dat_12_sub_1_xts_1_3())})
+  ab_ind_dat_12_sub_1_xts_1_1_weekly_1 <- reactive({to.weekly(ab_ind_dat_12_sub_1_xts_1_1())})
+  ab_ind_dat_12_sub_1_xts_1_1_weekly_2 <- reactive({to.weekly(ab_ind_dat_12_sub_1_xts_1_2())})
+  ab_ind_dat_12_sub_1_xts_1_1_weekly_3 <- reactive({to.weekly(ab_ind_dat_12_sub_1_xts_1_3())})
+  ab_ind_dat_12_sub_1_xts_1_1_daily_1 <- reactive({to.daily(ab_ind_dat_12_sub_1_xts_1_1())})
+  ab_ind_dat_12_sub_1_xts_1_1_daily_2 <- reactive({to.daily(ab_ind_dat_12_sub_1_xts_1_2())})
+  ab_ind_dat_12_sub_1_xts_1_1_daily_3 <- reactive({to.daily(ab_ind_dat_12_sub_1_xts_1_3())})
+  ab_ind_dat_12_sub_1_xts_1_1_hourly_1 <- reactive({to.hourly(ab_ind_dat_12_sub_1_xts_1_1())})
+  ab_ind_dat_12_sub_1_xts_1_1_hourly_2 <- reactive({to.hourly(ab_ind_dat_12_sub_1_xts_1_2())})
+  ab_ind_dat_12_sub_1_xts_1_1_hourly_3 <- reactive({to.hourly(ab_ind_dat_12_sub_1_xts_1_3())})
+  
+  output$AB_ENE_12_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_12_sub_1_xts_2_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_12_sub_1_xts_2_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_12_sub_1_xts_2_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_12_sub_1_xts_2_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_12_sub_1_xts_2_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_12_sub_1_xts_2_3().Low'))], type = "line", name = "Low DCR ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_12_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_12_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_12_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_12_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_12_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_12_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_12_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_12_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_12_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_12_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_12_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_12_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_12_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_12_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_12_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_12_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_12_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_12_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_12_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_12_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_12_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_12_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_12_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_1(), type = "line", name = "MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_2(), type = "line", name = "TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_12_sub_1_xts_1_3(), type = "line", name = "DCR", color = "green")
+  })
+  
+  ab_date_ind_13_1 <- reactive({paste(input$ab_dates_13[1],"00:00:00",sep = " ")})
+  ab_date_ind_13_2 <- reactive({paste(input$ab_dates_13[2],"00:00:00",sep = " ")})
+  ab_ind_dat_13_asset_filter <- reactive({input$ab_ind_13_ff})
+  
+  ab_ind_dat_13_sub_1 <- reactive({subset(ab_ind_dat_13,subset = (ab_ind_dat_13$Update_Time >= ab_date_ind_13_1() & ab_ind_dat_13$Update_Time <= ab_date_ind_13_2()))})
+  ab_ind_dat_13_sub_2 <- reactive({subset(ab_ind_dat_13_sub_1(),subset = (ab_ind_dat_13_sub_1()$ASSET == ab_ind_dat_13_asset_filter()))})
+  
+  ab_ind_dat_13_sub_1_xts_1_1 <- reactive({xts(ab_ind_dat_13_sub_2()$MC,ab_ind_dat_13_sub_2()$Update_Time)})
+  ab_ind_dat_13_sub_1_xts_1_2 <- reactive({xts(ab_ind_dat_13_sub_2()$TNG,ab_ind_dat_13_sub_2()$Update_Time)})
+  ab_ind_dat_13_sub_1_xts_1_3 <- reactive({xts(ab_ind_dat_13_sub_2()$DCR,ab_ind_dat_13_sub_2()$Update_Time)})
+  
+  ab_ind_dat_13_sub_1_xts_2_1 <- reactive({xts(ab_ind_dat_13_sub_1()$MC,ab_ind_dat_13_sub_1()$Update_Time)})
+  ab_ind_dat_13_sub_1_xts_2_2 <- reactive({xts(ab_ind_dat_13_sub_1()$TNG,ab_ind_dat_13_sub_1()$Update_Time)})
+  ab_ind_dat_13_sub_1_xts_2_3 <- reactive({xts(ab_ind_dat_13_sub_1()$DCR,ab_ind_dat_13_sub_1()$Update_Time)})
+  
+  ab_ind_dat_13_sub_1_xts_1_1_yearly_1 <- reactive({to.yearly(ab_ind_dat_13_sub_1_xts_2_1())})
+  ab_ind_dat_13_sub_1_xts_1_1_yearly_2 <- reactive({to.yearly(ab_ind_dat_13_sub_1_xts_2_2())})
+  ab_ind_dat_13_sub_1_xts_1_1_yearly_3 <- reactive({to.yearly(ab_ind_dat_13_sub_1_xts_2_3())})
+  ab_ind_dat_13_sub_1_xts_1_1_monthly_1 <- reactive({to.monthly(ab_ind_dat_13_sub_1_xts_1_1())})
+  ab_ind_dat_13_sub_1_xts_1_1_monthly_2 <- reactive({to.monthly(ab_ind_dat_13_sub_1_xts_1_2())})
+  ab_ind_dat_13_sub_1_xts_1_1_monthly_3 <- reactive({to.monthly(ab_ind_dat_13_sub_1_xts_1_3())})
+  ab_ind_dat_13_sub_1_xts_1_1_weekly_1 <- reactive({to.weekly(ab_ind_dat_13_sub_1_xts_1_1())})
+  ab_ind_dat_13_sub_1_xts_1_1_weekly_2 <- reactive({to.weekly(ab_ind_dat_13_sub_1_xts_1_2())})
+  ab_ind_dat_13_sub_1_xts_1_1_weekly_3 <- reactive({to.weekly(ab_ind_dat_13_sub_1_xts_1_3())})
+  ab_ind_dat_13_sub_1_xts_1_1_daily_1 <- reactive({to.daily(ab_ind_dat_13_sub_1_xts_1_1())})
+  ab_ind_dat_13_sub_1_xts_1_1_daily_2 <- reactive({to.daily(ab_ind_dat_13_sub_1_xts_1_2())})
+  ab_ind_dat_13_sub_1_xts_1_1_daily_3 <- reactive({to.daily(ab_ind_dat_13_sub_1_xts_1_3())})
+  ab_ind_dat_13_sub_1_xts_1_1_hourly_1 <- reactive({to.hourly(ab_ind_dat_13_sub_1_xts_1_1())})
+  ab_ind_dat_13_sub_1_xts_1_1_hourly_2 <- reactive({to.hourly(ab_ind_dat_13_sub_1_xts_1_2())})
+  ab_ind_dat_13_sub_1_xts_1_1_hourly_3 <- reactive({to.hourly(ab_ind_dat_13_sub_1_xts_1_3())})
+  
+  output$AB_ENE_13_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_13_sub_1_xts_2_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_13_sub_1_xts_2_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_13_sub_1_xts_2_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_13_sub_1_xts_2_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_13_sub_1_xts_2_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_13_sub_1_xts_2_3().Low'))], type = "line", name = "Low DCR ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_13_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_13_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_13_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_13_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_13_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_13_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_13_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_13_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_13_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_13_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_13_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_13_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_13_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_13_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_13_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_13_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_13_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_13_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_13_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_13_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_13_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_13_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_13_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_1(), type = "line", name = "MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_2(), type = "line", name = "TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_13_sub_1_xts_1_3(), type = "line", name = "DCR", color = "green")
+  })
+  
+  ab_date_ind_14_1 <- reactive({paste(input$ab_dates_14[1],"00:00:00",sep = " ")})
+  ab_date_ind_14_2 <- reactive({paste(input$ab_dates_14[2],"00:00:00",sep = " ")})
+  ab_ind_dat_14_asset_filter <- reactive({input$ab_ind_14_ff})
+  
+  ab_ind_dat_14_sub_1 <- reactive({subset(ab_ind_dat_14,subset = (ab_ind_dat_14$Update_Time >= ab_date_ind_14_1() & ab_ind_dat_14$Update_Time <= ab_date_ind_14_2()))})
+  ab_ind_dat_14_sub_2 <- reactive({subset(ab_ind_dat_14_sub_1(),subset = (ab_ind_dat_14_sub_1()$ASSET == ab_ind_dat_14_asset_filter()))})
+  
+  ab_ind_dat_14_sub_1_xts_1_1 <- reactive({xts(ab_ind_dat_14_sub_2()$MC,ab_ind_dat_14_sub_2()$Update_Time)})
+  ab_ind_dat_14_sub_1_xts_1_2 <- reactive({xts(ab_ind_dat_14_sub_2()$TNG,ab_ind_dat_14_sub_2()$Update_Time)})
+  ab_ind_dat_14_sub_1_xts_1_3 <- reactive({xts(ab_ind_dat_14_sub_2()$DCR,ab_ind_dat_14_sub_2()$Update_Time)})
+  
+  ab_ind_dat_14_sub_1_xts_2_1 <- reactive({xts(ab_ind_dat_14_sub_1()$MC,ab_ind_dat_14_sub_1()$Update_Time)})
+  ab_ind_dat_14_sub_1_xts_2_2 <- reactive({xts(ab_ind_dat_14_sub_1()$TNG,ab_ind_dat_14_sub_1()$Update_Time)})
+  ab_ind_dat_14_sub_1_xts_2_3 <- reactive({xts(ab_ind_dat_14_sub_1()$DCR,ab_ind_dat_14_sub_1()$Update_Time)})
+  
+  ab_ind_dat_14_sub_1_xts_1_1_yearly_1 <- reactive({to.yearly(ab_ind_dat_14_sub_1_xts_2_1())})
+  ab_ind_dat_14_sub_1_xts_1_1_yearly_2 <- reactive({to.yearly(ab_ind_dat_14_sub_1_xts_2_2())})
+  ab_ind_dat_14_sub_1_xts_1_1_yearly_3 <- reactive({to.yearly(ab_ind_dat_14_sub_1_xts_2_3())})
+  ab_ind_dat_14_sub_1_xts_1_1_monthly_1 <- reactive({to.monthly(ab_ind_dat_14_sub_1_xts_1_1())})
+  ab_ind_dat_14_sub_1_xts_1_1_monthly_2 <- reactive({to.monthly(ab_ind_dat_14_sub_1_xts_1_2())})
+  ab_ind_dat_14_sub_1_xts_1_1_monthly_3 <- reactive({to.monthly(ab_ind_dat_14_sub_1_xts_1_3())})
+  ab_ind_dat_14_sub_1_xts_1_1_weekly_1 <- reactive({to.weekly(ab_ind_dat_14_sub_1_xts_1_1())})
+  ab_ind_dat_14_sub_1_xts_1_1_weekly_2 <- reactive({to.weekly(ab_ind_dat_14_sub_1_xts_1_2())})
+  ab_ind_dat_14_sub_1_xts_1_1_weekly_3 <- reactive({to.weekly(ab_ind_dat_14_sub_1_xts_1_3())})
+  ab_ind_dat_14_sub_1_xts_1_1_daily_1 <- reactive({to.daily(ab_ind_dat_14_sub_1_xts_1_1())})
+  ab_ind_dat_14_sub_1_xts_1_1_daily_2 <- reactive({to.daily(ab_ind_dat_14_sub_1_xts_1_2())})
+  ab_ind_dat_14_sub_1_xts_1_1_daily_3 <- reactive({to.daily(ab_ind_dat_14_sub_1_xts_1_3())})
+  ab_ind_dat_14_sub_1_xts_1_1_hourly_1 <- reactive({to.hourly(ab_ind_dat_14_sub_1_xts_1_1())})
+  ab_ind_dat_14_sub_1_xts_1_1_hourly_2 <- reactive({to.hourly(ab_ind_dat_14_sub_1_xts_1_2())})
+  ab_ind_dat_14_sub_1_xts_1_1_hourly_3 <- reactive({to.hourly(ab_ind_dat_14_sub_1_xts_1_3())})
+  
+  output$AB_ENE_14_YEARLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_14_sub_1_xts_2_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_yearly_1()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_yearly_1()) %in% c('ab_ind_dat_14_sub_1_xts_2_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_14_sub_1_xts_2_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_yearly_2()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_yearly_2()) %in% c('ab_ind_dat_14_sub_1_xts_2_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_14_sub_1_xts_2_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_yearly_3()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_yearly_3()) %in% c('ab_ind_dat_14_sub_1_xts_2_3().Low'))], type = "line", name = "Low DCR ", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_14_WEEKLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_14_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_weekly_1()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_weekly_1()) %in% c('ab_ind_dat_14_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_14_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_weekly_2()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_weekly_2()) %in% c('ab_ind_dat_14_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_14_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_weekly_3()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_weekly_3()) %in% c('ab_ind_dat_14_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_14_DAILY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_14_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_daily_1()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_daily_1()) %in% c('ab_ind_dat_14_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_14_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_daily_2()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_daily_2()) %in% c('ab_ind_dat_14_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_14_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_daily_3()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_daily_3()) %in% c('ab_ind_dat_14_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_14_HOURLY <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% 
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_14_sub_1_xts_1_1().High'))], type = "line", name = "High MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_hourly_1()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_hourly_1()) %in% c('ab_ind_dat_14_sub_1_xts_1_1().Low'))], type = "line", name = "Low MC", color = "red") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_14_sub_1_xts_1_2().High'))], type = "line", name = "High TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_hourly_2()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_hourly_2()) %in% c('ab_ind_dat_14_sub_1_xts_1_2().Low'))], type = "line", name = "Low TNG", color = "red") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_14_sub_1_xts_1_3().High'))], type = "line", name = "High DCR", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1_hourly_3()[,(colnames(ab_ind_dat_14_sub_1_xts_1_1_hourly_3()) %in% c('ab_ind_dat_14_sub_1_xts_1_3().Low'))], type = "line", name = "Low DCR", color = "red") %>%
+      hc_navigator(enabled = TRUE)})
+  output$AB_ENE_14_ALL <- renderHighchart({
+    highchart() %>% 
+      hc_xAxis(type = "datetime") %>% hc_navigator(enabled = TRUE) %>% 
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_1(), type = "line", name = "MC", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_2(), type = "line", name = "TNG", color = "green") %>%
+      hc_add_series(ab_ind_dat_14_sub_1_xts_1_3(), type = "line", name = "DCR", color = "green")
+  })
   
   
   data_dict <- read_xlsx("www/data_dictionay.xlsx", sheet = config$dd_sheet)
   data_dict_df <- as.data.frame(data_dict)
   output$DATA_DICTIONARY_TABLE <- renderDataTable({data_dict_df})
+  
+  data_dict_nb <- read_xlsx("www/data_dictionay.xlsx",sheet = "Data dictionary")
+  data_dict_df_nb <- as.data.frame(data_dict_nb)
+  output$DATA_DICTIONARY_NB <- renderDataTable({data_dict_df_nb})
   
   
   
@@ -3361,11 +4371,47 @@ server <- function(input, output, session) {
                            min = head(nbload_data()$Date_time_local,1),
                            end = tail(nbload_data()$Date_time_local,1),
                            max = tail(nbload_data()$Date_time_local,1))
-      updateDateRangeInput(session, "nb_date_range",
+      updateDateRangeInput(session, "ns_date_range",
+                           start = head(ns_ind_dat$Date_time_local,1),
+                           min = head(ns_ind_dat$Date_time_local,1),
+                           end = tail(ns_ind_dat$Date_time_local,1),
+                           max = tail(ns_ind_dat$Date_time_local,1))
+      updateDateRangeInput(session, "ns_date_range_1",
+                           start = head(ns_ind_dat$Date_time_local,1),
+                           min = head(ns_ind_dat$Date_time_local,1),
+                           end = tail(ns_ind_dat$Date_time_local,1),
+                           max = tail(ns_ind_dat$Date_time_local,1))
+      updateDateRangeInput(session, "ab_date_range",
                            start = head(nbload_data()$Date_time_local,1),
                            min = head(nbload_data()$Date_time_local,1),
                            end = tail(nbload_data()$Date_time_local,1),
                            max = tail(nbload_data()$Date_time_local,1))
+      updateDateRangeInput(session, "bc_date_range",
+                           start = head(nbload_data()$Date_time_local,1),
+                           min = head(nbload_data()$Date_time_local,1),
+                           end = tail(nbload_data()$Date_time_local,1),
+                           max = tail(nbload_data()$Date_time_local,1))
+      updateDateRangeInput(session, "on_date_range",
+                           start = head(nbload_data()$Date_time_local,1),
+                           min = head(nbload_data()$Date_time_local,1),
+                           end = tail(nbload_data()$Date_time_local,1),
+                           max = tail(nbload_data()$Date_time_local,1))
+      updateDateRangeInput(session, "pei_date_range",
+                           start = head(nbload_data()$Date_time_local,1),
+                           min = head(nbload_data()$Date_time_local,1),
+                           end = tail(nbload_data()$Date_time_local,1),
+                           max = tail(nbload_data()$Date_time_local,1))
+      updateDateRangeInput(session, "nfl_date_range",
+                           start = head(nbload_data()$Date_time_local,1),
+                           min = head(nbload_data()$Date_time_local,1),
+                           end = tail(nbload_data()$Date_time_local,1),
+                           max = tail(nbload_data()$Date_time_local,1))
+      updateDateRangeInput(session, "qb_date_range",
+                           start = head(nbload_data()$Date_time_local,1),
+                           min = head(nbload_data()$Date_time_local,1),
+                           end = tail(nbload_data()$Date_time_local,1),
+                           max = tail(nbload_data()$Date_time_local,1))
+      
 
       
       if(!is.null(input$nb_filter))
@@ -3384,6 +4430,27 @@ server <- function(input, output, session) {
               date_2 <- paste(input$nb_date_range[2],"00:00:00",sep = " ")
               nbload_subset_download <- subset(nbload_data(),subset = (nbload_data()$Date_time_local >= date_1 & nbload_data()$Date_time_local <= date_2))
               write.csv(nbload_subset_download, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$ns_filter))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$ns_filter,{
+          output$data_ns_1 <- downloadHandler(
+            
+            filename = function() {
+              "ns_realtime_load_novascotia_utc.csv"
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$ns_date_range[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$ns_date_range[2],"00:00:00",sep = " ")
+              nsload_subset_download <- subset(ns_ind_dat,subset = (ns_ind_dat$Date_time_local >= date_1 & ns_ind_dat$Date_time_local <= date_2))
+              write.csv(nsload_subset_download, file, row.names = FALSE)
             }
           )
         })
@@ -3484,6 +4551,71 @@ server <- function(input, output, session) {
                         max = as.Date(tail(nfl_ind_dat$Date_time_local,1),"%Y-%m-%d"),
                         value=c(as.Date(nfl_dd_1_1),nfl_dd_2_2),
                         timeFormat="%Y-%m-%d")
+    }
+    if(input$rted_menu == "AB"){
+      ab_dd_8_1 <- as.Date(tail(ab_ind_dat_8$Update_Time,1))-(7)
+      ab_dd_8_1_1 <- paste(ab_dd_8_1,"00:00:00",sep=" ")
+      ab_dd_8_2_2 <- as.Date(tail(ab_ind_dat_8$Update_Time,1))
+      updateSliderInput(session, "ab_dates_8",
+                        min = as.Date(head(ab_ind_dat_8$Update_Time,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ab_ind_dat_8$Update_Time,1),"%Y-%m-%d"),
+                        value=c(as.Date(ab_dd_8_1_1),ab_dd_8_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSelectInput(session,"ab_ind_8_ff", choices = unique(ab_ind_dat_8$ASSET))
+      ab_dd_9_1 <- as.Date(tail(ab_ind_dat_9$Update_Time,1))-(7)
+      ab_dd_9_1_1 <- paste(ab_dd_9_1,"00:00:00",sep=" ")
+      ab_dd_9_2_2 <- as.Date(tail(ab_ind_dat_9$Update_Time,1))
+      updateSliderInput(session, "ab_dates_9",
+                        min = as.Date(head(ab_ind_dat_9$Update_Time,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ab_ind_dat_9$Update_Time,1),"%Y-%m-%d"),
+                        value=c(as.Date(ab_dd_9_1_1),ab_dd_9_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSelectInput(session,"ab_ind_9_ff", choices = unique(ab_ind_dat_9$ASSET))
+      ab_dd_10_1 <- as.Date(tail(ab_ind_dat_10$Update_Time,1))-(7)
+      ab_dd_10_1_1 <- paste(ab_dd_10_1,"00:00:00",sep=" ")
+      ab_dd_10_2_2 <- as.Date(tail(ab_ind_dat_10$Update_Time,1))
+      updateSliderInput(session, "ab_dates_10",
+                        min = as.Date(head(ab_ind_dat_10$Update_Time,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ab_ind_dat_10$Update_Time,1),"%Y-%m-%d"),
+                        value=c(as.Date(ab_dd_10_1_1),ab_dd_10_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSelectInput(session,"ab_ind_10_ff", choices = unique(ab_ind_dat_10$ASSET))
+      ab_dd_11_1 <- as.Date(tail(ab_ind_dat_11$Update_Time,1))-(7)
+      ab_dd_11_1_1 <- paste(ab_dd_11_1,"00:00:00",sep=" ")
+      ab_dd_11_2_2 <- as.Date(tail(ab_ind_dat_11$Update_Time,1))
+      updateSliderInput(session, "ab_dates_11",
+                        min = as.Date(head(ab_ind_dat_11$Update_Time,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ab_ind_dat_11$Update_Time,1),"%Y-%m-%d"),
+                        value=c(as.Date(ab_dd_11_1_1),ab_dd_11_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSelectInput(session,"ab_ind_11_ff", choices = unique(ab_ind_dat_11$ASSET))
+      ab_dd_12_1 <- as.Date(tail(ab_ind_dat_12$Update_Time,1))-(7)
+      ab_dd_12_1_1 <- paste(ab_dd_12_1,"00:00:00",sep=" ")
+      ab_dd_12_2_2 <- as.Date(tail(ab_ind_dat_12$Update_Time,1))
+      updateSliderInput(session, "ab_dates_12",
+                        min = as.Date(head(ab_ind_dat_12$Update_Time,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ab_ind_dat_12$Update_Time,1),"%Y-%m-%d"),
+                        value=c(as.Date(ab_dd_12_1_1),ab_dd_12_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSelectInput(session,"ab_ind_12_ff", choices = unique(ab_ind_dat_12$ASSET))
+      ab_dd_13_1 <- as.Date(tail(ab_ind_dat_13$Update_Time,1))-(7)
+      ab_dd_13_1_1 <- paste(ab_dd_13_1,"00:00:00",sep=" ")
+      ab_dd_13_2_2 <- as.Date(tail(ab_ind_dat_13$Update_Time,1))
+      updateSliderInput(session, "ab_dates_13",
+                        min = as.Date(head(ab_ind_dat_13$Update_Time,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ab_ind_dat_13$Update_Time,1),"%Y-%m-%d"),
+                        value=c(as.Date(ab_dd_13_1_1),ab_dd_13_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSelectInput(session,"ab_ind_13_ff", choices = unique(ab_ind_dat_13$ASSET))
+      ab_dd_14_1 <- as.Date(tail(ab_ind_dat_14$Update_Time,1))-(7)
+      ab_dd_14_1_1 <- paste(ab_dd_14_1,"00:00:00",sep=" ")
+      ab_dd_14_2_2 <- as.Date(tail(ab_ind_dat_14$Update_Time,1))
+      updateSliderInput(session, "ab_dates_14",
+                        min = as.Date(head(ab_ind_dat_14$Update_Time,1),"%Y-%m-%d"),
+                        max = as.Date(tail(ab_ind_dat_14$Update_Time,1),"%Y-%m-%d"),
+                        value=c(as.Date(ab_dd_14_1_1),ab_dd_14_2_2),
+                        timeFormat="%Y-%m-%d")
+      updateSelectInput(session,"ab_ind_14_ff", choices = unique(ab_ind_dat_14$ASSET))
     }
     if(input$rted_menu == "QB"){
       qb_dd_1 <- as.Date(Sys.Date())-(7)
