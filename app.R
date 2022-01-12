@@ -171,7 +171,7 @@ color: green;
                     fluidRow(bsButton("button_AB","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("British Coloumbia")),column(width = 12, id="bcmean",uiOutput("BC_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4("British Columbia")),column(width = 12, id="bcmean",uiOutput("BC_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("BC_load"), type = "html", loader = "loader3")),
@@ -460,8 +460,8 @@ color: green;
                        )))
               ),
       tabItem(tabName = "NB",
-              tabBox(title = "New Brunswick", id = "tabnb", height = "100%", width = "100%", 
-              tabPanel("Visualization",
+              tabBox(title = h3("New Brunswick"), id = "tabnb", height = "100%", width = "100%",side = "right", 
+              tabPanel(h4("Visualization"),
               fluidRow(
                 column(width =10, offset = 2,
                        box(
@@ -578,7 +578,7 @@ color: green;
                            column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
                          )
                        )))),
-              tabPanel("Legends",dataTableOutput("DATA_DICTIONARY_NB"))
+              tabPanel(h4("Legends"),dataTableOutput("DATA_DICTIONARY_NB"))
               )
               
       ),
@@ -4320,7 +4320,7 @@ server <- function(input, output, session) {
   data_dict_df <- as.data.frame(data_dict)
   output$DATA_DICTIONARY_TABLE <- renderDataTable({data_dict_df})
   
-  data_dict_nb <- read_xlsx("www/data_dictionay.xlsx",sheet = "Data dictionary")
+  data_dict_nb <- read_xlsx("www/data_dictionary.xlsx",sheet = "New_Brunswick")
   data_dict_df_nb <- as.data.frame(data_dict_nb)
   output$DATA_DICTIONARY_NB <- renderDataTable({data_dict_df_nb})
   
@@ -4377,40 +4377,57 @@ server <- function(input, output, session) {
                            end = tail(ns_ind_dat$Date_time_local,1),
                            max = tail(ns_ind_dat$Date_time_local,1))
       updateDateRangeInput(session, "ns_date_range_1",
-                           start = head(ns_ind_dat$Date_time_local,1),
-                           min = head(ns_ind_dat$Date_time_local,1),
-                           end = tail(ns_ind_dat$Date_time_local,1),
-                           max = tail(ns_ind_dat$Date_time_local,1))
+                           start = head(ns_ind_dat_1$Date_time_local,1),
+                           min = head(ns_ind_dat_1$Date_time_local,1),
+                           end = tail(ns_ind_dat_1$Date_time_local,1),
+                           max = tail(ns_ind_dat_1$Date_time_local,1))
       updateDateRangeInput(session, "ab_date_range",
                            start = head(nbload_data()$Date_time_local,1),
                            min = head(nbload_data()$Date_time_local,1),
                            end = tail(nbload_data()$Date_time_local,1),
                            max = tail(nbload_data()$Date_time_local,1))
       updateDateRangeInput(session, "bc_date_range",
-                           start = head(nbload_data()$Date_time_local,1),
-                           min = head(nbload_data()$Date_time_local,1),
-                           end = tail(nbload_data()$Date_time_local,1),
-                           max = tail(nbload_data()$Date_time_local,1))
+                           start = head(bc_ind_dat$Date_time_local,1),
+                           min = head(bc_ind_dat$Date_time_local,1),
+                           end = tail(bc_ind_dat$Date_time_local,1),
+                           max = tail(bc_ind_dat$Date_time_local,1))
+      updateDateRangeInput(session, "bc_date_range_1",
+                           start = head(bc_ind_dat_1$date_time_local,1),
+                           min = head(bc_ind_dat_1$date_time_local,1),
+                           end = tail(bc_ind_dat_1$date_time_local,1),
+                           max = tail(bc_ind_dat_1$date_time_local,1))
+      
       updateDateRangeInput(session, "on_date_range",
-                           start = head(nbload_data()$Date_time_local,1),
-                           min = head(nbload_data()$Date_time_local,1),
-                           end = tail(nbload_data()$Date_time_local,1),
-                           max = tail(nbload_data()$Date_time_local,1))
+                           start = head(on_ind_dat$date_time_local,1),
+                           min = head(on_ind_dat$date_time_local,1),
+                           end = tail(on_ind_dat$date_time_local,1),
+                           max = tail(on_ind_dat$date_time_local,1))
       updateDateRangeInput(session, "pei_date_range",
-                           start = head(nbload_data()$Date_time_local,1),
-                           min = head(nbload_data()$Date_time_local,1),
-                           end = tail(nbload_data()$Date_time_local,1),
-                           max = tail(nbload_data()$Date_time_local,1))
+                           start = head(pei_ind_dat$Date_time_local,1),
+                           min = head(pei_ind_dat$Date_time_local,1),
+                           end = tail(pei_ind_dat$Date_time_local,1),
+                           max = tail(pei_ind_dat$Date_time_local,1))
       updateDateRangeInput(session, "nfl_date_range",
-                           start = head(nbload_data()$Date_time_local,1),
-                           min = head(nbload_data()$Date_time_local,1),
-                           end = tail(nbload_data()$Date_time_local,1),
-                           max = tail(nbload_data()$Date_time_local,1))
+                           start = head(nfl_ind_dat$Date_time_local,1),
+                           min = head(nfl_ind_dat$Date_time_local,1),
+                           end = tail(nfl_ind_dat$Date_time_local,1),
+                           max = tail(nfl_ind_dat$Date_time_local,1))
       updateDateRangeInput(session, "qb_date_range",
-                           start = head(nbload_data()$Date_time_local,1),
-                           min = head(nbload_data()$Date_time_local,1),
-                           end = tail(nbload_data()$Date_time_local,1),
-                           max = tail(nbload_data()$Date_time_local,1))
+                           start = head(qb_ind_dat_1$Date_time_local,1),
+                           min = head(qb_ind_dat_1$Date_time_local,1),
+                           end = tail(qb_ind_dat_1$Date_time_local,1),
+                           max = tail(qb_ind_dat_1$Date_time_local,1))
+      updateDateRangeInput(session, "qb_date_range_1",
+                           start = head(qb_ind_dat_2$Date_time_local,1),
+                           min = head(qb_ind_dat_2$Date_time_local,1),
+                           end = tail(qb_ind_dat_2$Date_time_local,1),
+                           max = tail(qb_ind_dat_2$Date_time_local,1))
+      updateDateRangeInput(session, "qb_date_range_2",
+                           start = head(qb_ind_dat_3$Date_time_local,1),
+                           min = head(qb_ind_dat_3$Date_time_local,1),
+                           end = tail(qb_ind_dat_3$Date_time_local,1),
+                           max = tail(qb_ind_dat_3$Date_time_local,1))
+      
       
 
       
@@ -4421,7 +4438,7 @@ server <- function(input, output, session) {
           output$data_nb <- downloadHandler(
             
             filename = function() {
-              "nb_realtime_alldata_new_brunswick_utc.csv"
+              paste(config$provinces$NB$table1,"csv",sep = ".")
             },
             content = function(file)
             {
@@ -4442,7 +4459,7 @@ server <- function(input, output, session) {
           output$data_ns_1 <- downloadHandler(
             
             filename = function() {
-              "ns_realtime_load_novascotia_utc.csv"
+              paste(config$provinces$NS$table1,"csv",sep = ".")
             },
             content = function(file)
             {
@@ -4451,6 +4468,195 @@ server <- function(input, output, session) {
               date_2 <- paste(input$ns_date_range[2],"00:00:00",sep = " ")
               nsload_subset_download <- subset(ns_ind_dat,subset = (ns_ind_dat$Date_time_local >= date_1 & ns_ind_dat$Date_time_local <= date_2))
               write.csv(nsload_subset_download, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$ns_filter_1))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$ns_filter_1,{
+          output$data_ns_2 <- downloadHandler(
+            
+            filename = function() {
+              paste(config$provinces$NS$table2,"csv",sep = ".")
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$ns_date_range_1[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$ns_date_range_1[2],"00:00:00",sep = " ")
+              nsload_subset_download_1 <- subset(ns_ind_dat_1,subset = (ns_ind_dat_1$Date_time_local >= date_1 & ns_ind_dat_1$Date_time_local <= date_2))
+              write.csv(nsload_subset_download_1, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$bc_filter))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$bc_filter,{
+          output$data_bc_1 <- downloadHandler(
+            
+            filename = function() {
+              paste(config$provinces$BC$table1,"csv",sep = ".")
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$bc_date_range[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$bc_date_range[2],"00:00:00",sep = " ")
+              bcload_subset_download <- subset(bc_ind_dat,subset = (bc_ind_dat$Date_time_local >= date_1 & bc_ind_dat$Date_time_local <= date_2))
+              write.csv(bcload_subset_download, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$bc_filter_1))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$bc_filter_1,{
+          output$data_bc_2 <- downloadHandler(
+            
+            filename = function() {
+              paste(config$provinces$BC$table3,"csv",sep = ".")
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$bc_date_range_1[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$bc_date_range_1[2],"00:00:00",sep = " ")
+              bcload_subset_download_1 <- subset(bc_ind_dat_1,subset = (bc_ind_dat_1$date_time_local >= date_1 & bc_ind_dat_1$date_time_local <= date_2))
+              write.csv(bcload_subset_download_1, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$on_filter))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$on_filter,{
+          output$data_on <- downloadHandler(
+            
+            filename = function() {
+              paste(config$provinces$ON$table1,"csv",sep = ".")
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$on_date_range[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$on_date_range[2],"00:00:00",sep = " ")
+              onload_subset_download <- subset(on_ind_dat,subset = (on_ind_dat$date_time_local >= date_1 & on_ind_dat$date_time_local <= date_2))
+              write.csv(onload_subset_download, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$pei_filter))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$pei_filter,{
+          output$data_pei_1 <- downloadHandler(
+            
+            filename = function() {
+              paste(config$provinces$PEI$table1,"csv",sep = ".")
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$pei_date_range[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$pei_date_range[2],"00:00:00",sep = " ")
+              peiload_subset_download <- subset(pei_ind_dat,subset = (pei_ind_dat$Date_time_local >= date_1 & pei_ind_dat$Date_time_local <= date_2))
+              write.csv(peiload_subset_download, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$nfl_filter))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$nfl_filter,{
+          output$data_nfl <- downloadHandler(
+            
+            filename = function() {
+              paste(config$provinces$NFL$table1,"csv",sep = ".")
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$nfl_date_range[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$nfl_date_range[2],"00:00:00",sep = " ")
+              nflload_subset_download <- subset(nfl_ind_dat,subset = (nfl_ind_dat$Date_time_local >= date_1 & nfl_ind_dat$Date_time_local <= date_2))
+              write.csv(nflload_subset_download, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$qb_filter))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$qb_filter,{
+          output$data_qb_1 <- downloadHandler(
+            
+            filename = function() {
+              paste(config$provinces$QUEBEC$table1,"csv",sep = ".")
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$qb_date_range[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$qb_date_range[2],"00:00:00",sep = " ")
+              qbload_subset_download <- subset(qb_ind_dat_1,subset = (qb_ind_dat_1$Date_time_local >= date_1 & qb_ind_dat_1$Date_time_local <= date_2))
+              write.csv(qbload_subset_download, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$qb_filter_1))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$qb_filter_1,{
+          output$data_qb_2 <- downloadHandler(
+            
+            filename = function() {
+              paste(config$provinces$QUEBEC$table2,"csv",sep = ".")
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$qb_date_range_1[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$qb_date_range_1[2],"00:00:00",sep = " ")
+              qbload_subset_download_1 <- subset(qb_ind_dat_2,subset = (qb_ind_dat_2$Date_time_local >= date_1 & qb_ind_dat_2$Date_time_local <= date_2))
+              write.csv(qbload_subset_download_1, file, row.names = FALSE)
+            }
+          )
+        })
+        
+      }
+      if(!is.null(input$qb_filter_2))
+      {
+        shinyjs::show("ns_dwn_1")
+        observeEvent(input$qb_filter_2,{
+          output$data_qb_3 <- downloadHandler(
+            
+            filename = function() {
+              paste(config$provinces$QUEBEC$table3,"csv",sep = ".")
+            },
+            content = function(file)
+            {
+              showNotification("Your File is Downloading, Please wait for some time.", type="message")
+              date_1 <- paste(input$qb_date_range_2[1],"00:00:00",sep = " ")
+              date_2 <- paste(input$qb_date_range_2[2],"00:00:00",sep = " ")
+              qbload_subset_download_2 <- subset(qb_ind_dat_3,subset = (qb_ind_dat_3$Date_time_local >= date_1 & qb_ind_dat_3$Date_time_local <= date_2))
+              write.csv(qbload_subset_download_2, file, row.names = FALSE)
             }
           )
         })
