@@ -23,6 +23,14 @@ library(RODBC)
 library(tidyquant)
 library(googlesheets4)
 library(googledrive)
+library(shiny.i18n)
+library(reactlog)
+library(rsdmx)
+
+reactlog_enable()
+
+i18n <- Translator$new(translation_json_path = "www/translation_fr.json")
+i18n$set_translation_language("en")
 
 
 dashboard_ui_slider_date_end <- Sys.Date()
@@ -33,22 +41,25 @@ dashboard_ui_slider_date_start <- paste(Sys.Date()-7,"00:00:00",sep=" ")
 ui <- dashboardPage(
   dashboardHeader(title = "CCEI-RTED DashBoard",dropdownMenu(type = "messages", icon = icon("cog"), headerText = NULL, badgeStatus = NULL)),
   dashboardSidebar(
+    usei18n(i18n),
     sidebarMenu( id = "rted_menu",
-                 menuItem("Dashboard", tabName = "dashboard", icon = icon("chart-line")),
-                 menuItem("Prince Edward Island",tabName = "pei", icon = icon("chart-bar")),
-                 menuItem("Nova Scotia",tabName = "NS", icon = icon("chart-bar")),
-                 menuItem("New Brunswick",tabName = "NB", icon = icon("chart-bar")),
-                 menuItem("Newfoundland & Labrador",tabName = "NFL", icon = icon("chart-bar")),
-                 menuItem("Quebec",tabName = "QB", icon = icon("chart-bar")),
-                 menuItem("Ontario",tabName = "ON", icon = icon("chart-bar")),
-                 menuItem("Alberta",tabName = "AB", icon = icon("chart-bar")),
-                 menuItem("British Coloumbia",tabName = "BC", icon = icon("chart-bar")),
-                 menuItem("Downloads",tabName = "Dwn", icon = icon("download")),
-                 menuItem("Data Dictionary",tabName = "DD", icon = icon("book"))
+                 menuItem(i18n$t("Dashboard"), tabName = "dashboard", icon = icon("chart-line")),
+                 menuItem(i18n$t("Prince Edward Island"),tabName = "pei", icon = icon("chart-bar")),
+                 menuItem(i18n$t("Nova Scotia"),tabName = "NS", icon = icon("chart-bar")),
+                 menuItem(i18n$t("New Brunswick"),tabName = "NB", icon = icon("chart-bar")),
+                 menuItem(i18n$t("Newfoundland & Labrador"),tabName = "NFL", icon = icon("chart-bar")),
+                 menuItem(i18n$t("Quebec"),tabName = "QB", icon = icon("chart-bar")),
+                 menuItem(i18n$t("Ontario"),tabName = "ON", icon = icon("chart-bar")),
+                 menuItem(i18n$t("Alberta"),tabName = "AB", icon = icon("chart-bar")),
+                 menuItem(i18n$t("British Columbia"),tabName = "BC", icon = icon("chart-bar")),
+                 menuItem(i18n$t("Downloads"),tabName = "Dwn", icon = icon("download")),
+                 menuItem(i18n$t("Data Dictionary"),tabName = "DD", icon = icon("book")),
+                 menuItem(i18n$t("Settings"),tabName = "ST", icon = icon("tools"))
     )
   ),
   dashboardBody(
     shinyjs::useShinyjs(),
+    usei18n(i18n),
     tags$style(HTML("
 
 
@@ -117,22 +128,88 @@ color: red;
 color: green;
 }
 
+#dashboard_page{
+margin-left: 25px;
+margin-right: 25px;
+}
+
+#hl{
+float:right;
+}
+
+#header_title{
+float:left;
+}
+
+
+#lang_btn{
+float:right;
+}
+
+#bd_twr{
+float:right;
+padding-left:10px;
+animation: blink-animation 1s steps(5, start) infinite;
+        -webkit-animation: blink-animation 1s steps(5, start) infinite;
+        
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
+#server_stat {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#server_stat td, #server_stat th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#server_stat tr:nth-child(even){background-color: #f2f2f2;}
+
+#server_stat tr:hover {background-color: #ddd;}
+
+#server_stat th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: white;
+}
+
+
+
 
                                     ")),
     tabItems(
       tabItem(tabName = "dashboard",
-              fluidRow(
-                column(width = 12,offset = 3,
-                       box(
-                         title = "Date & Time UTC", status = "success", solidHeader = TRUE,
-                         collapsible = TRUE,
-                         h3(textOutput("timer"),id = "live_clock")
-                       ))
-              ),
+              fluidPage( id = "dashboard_page",
+              fluidRow(div(h2(id = "header_title",i18n$t("High Frequency Electricity Data Dashboard HFED - Pilot Project")),
+                           div(id = "lang_btn",
+                             bsButton("Btn_EN","English",icon = icon("language"),style = "primary",size = "small",type = "action"),
+                             bsButton("Btn_FR","French",icon = icon("language"),style = "primary",size = "small",type = "action")))),
+              fluidRow(h4(textOutput("timer"))),
+              br(),
+              fluidRow(h4(i18n$t("The Canadian Center for Energy Information (CCEI) presents a dashboard gathering publicly-available high-frequency electricity data in Canada."),
+                          i18n$t("Information is collected by web scraping. Data visualizations and datasets are updated as soon as new data points become available on provincial utility websites."), 
+                          i18n$t("This new source of information was developed by the CCEI with the support of many partners namely National Resource Canada (NRCan), the Canada Energy Regulator (CER) and Statistics Canada."),
+                          i18n$t("It aims at providing simplified access to timely (almost real-time) and detailed information (hourly granularity) on electricity and supporting key analysis on energy."))),
+              br(),
+              fluidRow(box(title = HTML(paste("  <i id='bd_twr' class='fas fa-broadcast-tower'></i>",i18n$t("Live Data"))), status = "primary", width="100%" ,solidHeader = TRUE,
               fluidRow(
                 box(
                   title = fluidRow(id = "dash_title",
-                    fluidRow(column(width = 8, h4("Prince Edward Island")),column(width = 12, id="peimean",uiOutput("PEI_MEAN")))),
+                    fluidRow(column(width = 8, h4(i18n$t("Prince Edward Island"))),column(width = 12, id="peimean",uiOutput("PEI_MEAN")))),
                   width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
@@ -141,14 +218,14 @@ color: green;
                 ),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Nova Scotia")),column(width = 12, id="nsmean",uiOutput("NS_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4(i18n$t("Nova Scotia"))),column(width = 12, id="nsmean",uiOutput("NS_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("NS_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_NS","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("New Brunswick")),column(width = 12, id="nbmean",uiOutput("NB_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4(i18n$t("New Brunswick"))),column(width = 12, id="nbmean",uiOutput("NB_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("NB_load"), type = "html", loader = "loader3")),
@@ -157,21 +234,21 @@ color: green;
               fluidRow(
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Ontario")),column(width = 12, id="onmean",uiOutput("ON_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4(i18n$t("Ontario"))),column(width = 12, id="onmean",uiOutput("ON_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("ON_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_ON","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Alberta")),column(width = 12, id="abmean",uiOutput("AB_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4(i18n$t("Alberta"))),column(width = 12, id="abmean",uiOutput("AB_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("AB_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_AB","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("British Columbia")),column(width = 12, id="bcmean",uiOutput("BC_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4(i18n$t("British Columbia"))),column(width = 12, id="bcmean",uiOutput("BC_MEAN")))),width = 4, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("BC_load"), type = "html", loader = "loader3")),
@@ -180,27 +257,34 @@ color: green;
               fluidRow(
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Newfoundland & Labrador")),column(width =12, id="nflmean",uiOutput("NFL_MEAN")))),width = 6, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4(i18n$t("Newfoundland & Labrador"))),column(width =12, id="nflmean",uiOutput("NFL_MEAN")))),width = 6, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("NFL_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_NFL","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
                 box(
                   title = fluidRow(id = "dash_title",
-                  fluidRow(column(width = 8, h4("Quebec")),column(width = 12, id="qbmean",uiOutput("QB_MEAN")))),width = 6, status = "success", solidHeader = TRUE,
+                  fluidRow(column(width = 8, h4(i18n$t("Quebec"))),column(width = 12, id="qbmean",uiOutput("QB_MEAN")))),width = 6, status = "success", solidHeader = TRUE,
                   collapsible = TRUE,
                   column(
                     fluidRow(withLoader(highchartOutput("QB_load"), type = "html", loader = "loader3")),
                     fluidRow(bsButton("button_QB","For More Detailed Information, Click Here", icon = icon("chart-bar"), style = "primary", block = TRUE)),width = 12)),
-              )),
+              ))))),
       
       tabItem(tabName = "pei",
+              fluidPage(id = "dashboard_page",
+                fluidRow(div(h2(id = "header_title",i18n$t("Prince Edward Island")),
+                             div(id = "lang_btn",
+                                 bsButton("Btn_EN_pei","English",icon = icon("language"),style = "primary",size = "small",type = "action"),
+                                 bsButton("Btn_FR_pei","French",icon = icon("language"),style = "primary",size = "small",type = "action")))),
+                fluidRow(h4(textOutput("timer_pei"))),
+                br(),
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "PEI Load", width = 10, status = "warning", solidHeader = TRUE,
+                         title = i18n$t("Load"), width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_pei", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_pei", h4(i18n$t("Frequency")), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3,conditionalPanel(condition = "input.select_fr_pei != 1", sliderInput("pei_dates_1",
                                                                               "Dates",
@@ -227,9 +311,9 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "PEI Fuel Type", width = 10, status = "warning", solidHeader = TRUE,
+                         title = i18n$t("Fuel Type"), width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_pei_2", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_pei_2", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_pei_2 != 1",sliderInput("pei_dates_2",
                                                                               "Dates",
@@ -256,9 +340,9 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "PEI Import & Export", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Import & Export", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_pei_3", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_pei_3", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_pei_3 != 1",sliderInput("pei_dates_3",
                                                                               "Dates",
@@ -285,9 +369,9 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "PEI Wind Percentage", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Wind Percentage", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_pei_4", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_pei_4", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_pei_4 != 1",sliderInput("pei_dates_4",
                                                                               "Dates",
@@ -311,15 +395,22 @@ color: green;
                            column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
                          )
                        )))
-      ),
+      )),
       tabItem(tabName = "NS",
+              fluidPage(id = "dashboard_page",
+                fluidRow(div(h2(id = "header_title",i18n$t("Nova Scotia")),
+                             div(id = "lang_btn",
+                                 bsButton("Btn_EN_ns","English",icon = icon("language"),style = "primary",size = "small",type = "action"),
+                                 bsButton("Btn_FR_ns","French",icon = icon("language"),style = "primary",size = "small",type = "action")))),
+                fluidRow(h4(textOutput("timer_ns"))),
+                br(),
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NS Load", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Load", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ns", h4("Select Frequency"), 
-                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                         fluidRow(column(width = 2, selectInput("select_fr_ns", h4("Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "5 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ns != 1",sliderInput("ns_dates_1",
                                                                                                                                      "Dates",
                                                                                                                                      min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
@@ -345,10 +436,10 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NS Export & Import - I", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Export & Import - I", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ns_1", h4("Select Frequency"), 
-                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                         fluidRow(column(width = 2, selectInput("select_fr_ns_1", h4("Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "5 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ns_1 != 1",sliderInput("ns_dates_2",
                                                                                                                                      "Dates",
                                                                                                                                      min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
@@ -374,10 +465,10 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NS Export & Import - II", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Export & Import - II", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ns_2", h4("Select Frequency"), 
-                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                         fluidRow(column(width = 2, selectInput("select_fr_ns_2", h4("Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "5 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ns_2 != 1",sliderInput("ns_dates_3",
                                                                                                                                      "Dates",
                                                                                                                                      min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
@@ -403,10 +494,10 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NS Export & Import - III", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Export & Import - III", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ns_3", h4("Select Frequency"), 
-                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                         fluidRow(column(width = 2, selectInput("select_fr_ns_3", h4("Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "5 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ns_3 != 1",sliderInput("ns_dates_4",
                                                                                                                                      "Dates",
                                                                                                                                      min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
@@ -432,10 +523,10 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NS Export & Import - IV", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Export & Import - IV", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ns_4", h4("Select Frequency"), 
-                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                         fluidRow(column(width = 2, selectInput("select_fr_ns_4", h4("Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "5 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ns_4 != 1",sliderInput("ns_dates_5",
                                                                                                                                      "Dates",
                                                                                                                                      min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
@@ -458,17 +549,24 @@ color: green;
                            column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
                          )
                        )))
-              ),
+              )),
       tabItem(tabName = "NB",
-              tabBox(title = h3("New Brunswick"), id = "tabnb", height = "100%", width = "100%",side = "right", 
+              fluidPage(id = "dashboard_page",
+                fluidRow(div(h2(id = "header_title",i18n$t("New Brunswick")),
+                             div(id = "lang_btn",
+                                 bsButton("Btn_EN_nb","English",icon = icon("language"),style = "primary",size = "small",type = "action"),
+                                 bsButton("Btn_FR_nb","French",icon = icon("language"),style = "primary",size = "small",type = "action")))),
+                fluidRow(h4(textOutput("timer_nb"))),
+                br(),
+              tabBox( id = "tabnb", height = "100%", width = "100%",side = "right", 
               tabPanel(h4("Visualization"),
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NB Load", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Load", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_nb", h4("Select Frequency"), 
-                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                         fluidRow(column(width = 2, selectInput("select_fr_nb", h4("Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "5 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_nb != 1",sliderInput("nb_dates_1",
                                                                               "Dates",
                                                                               min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
@@ -494,10 +592,10 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NB Demand", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Demand", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_nb_2", h4("Select Frequency"), 
-                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                         fluidRow(column(width = 2, selectInput("select_fr_nb_2", h4("Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "5 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_nb_2 != 1",sliderInput("nb_dates_2",
                                                                               "Dates",
                                                                               min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
@@ -523,10 +621,10 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NB 10 Min Reserve", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "10 Min Reserve", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_nb_3", h4("Select Frequency"), 
-                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                         fluidRow(column(width = 2, selectInput("select_fr_nb_3", h4("Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "5 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_nb_3 != 1",sliderInput("nb_dates_3",
                                                                               "Dates",
                                                                               min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
@@ -552,10 +650,10 @@ color: green;
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NB 30 Min Reserve", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "30 Min Reserve", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_nb_4", h4("Select Frequency"), 
-                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
+                         fluidRow(column(width = 2, selectInput("select_fr_nb_4", h4("Frequency"), 
+                                                                choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "5 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_nb_4 != 1",sliderInput("nb_dates_4",
                                                                               "Dates",
                                                                               min = as.Date(dashboard_ui_slider_date_start,"%Y-%m-%d"),
@@ -581,14 +679,21 @@ color: green;
               tabPanel(h4("Legends"),dataTableOutput("DATA_DICTIONARY_NB"))
               )
               
-      ),
+      )),
       tabItem(tabName = "ON",
+              fluidPage(id = "dashboard_page",
+                fluidRow(div(h2(id = "header_title",i18n$t("Ontario")),
+                             div(id = "lang_btn",
+                                 bsButton("Btn_EN_on","English",icon = icon("language"),style = "primary",size = "small",type = "action"),
+                                 bsButton("Btn_FR_on","French",icon = icon("language"),style = "primary",size = "small",type = "action")))),
+                fluidRow(h4(textOutput("timer_on"))),
+                br(),
       fluidRow(
         column(width =10, offset = 2,
                box(
-                 title = "ON Total Energy", width = 10, status = "warning", solidHeader = TRUE,
+                 title = "Total Energy", width = 10, status = "warning", solidHeader = TRUE,
                  collapsible = TRUE,
-                 fluidRow(column(width = 2, selectInput("select_fr_on1", h4("Select Frequency"), 
+                 fluidRow(column(width = 2, selectInput("select_fr_on1", h4("Frequency"), 
                                                         choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                           column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_on1 != 1",sliderInput("on_dates_1",
                                                                                                                              "Dates",
@@ -615,9 +720,9 @@ color: green;
       fluidRow(
         column(width =10, offset = 2,
                box(
-                 title = "ON Total Loss", width = 10, status = "warning", solidHeader = TRUE,
+                 title = "Total Loss", width = 10, status = "warning", solidHeader = TRUE,
                  collapsible = TRUE,
-                 fluidRow(column(width = 2, selectInput("select_fr_on2", h4("Select Frequency"), 
+                 fluidRow(column(width = 2, selectInput("select_fr_on2", h4("Frequency"), 
                                                         choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                           column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_on2 != 1",sliderInput("on_dates_2",
                                                                                                                               "Dates",
@@ -644,9 +749,9 @@ color: green;
       fluidRow(
         column(width =10, offset = 2,
                box(
-                 title = "ON Total Load", width = 10, status = "warning", solidHeader = TRUE,
+                 title = "Total Load", width = 10, status = "warning", solidHeader = TRUE,
                  collapsible = TRUE,
-                 fluidRow(column(width = 2, selectInput("select_fr_on3", h4("Select Frequency"), 
+                 fluidRow(column(width = 2, selectInput("select_fr_on3", h4("Frequency"), 
                                                         choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                           column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_on3 != 1",sliderInput("on_dates_3",
                                                                                                                               "Dates",
@@ -673,9 +778,9 @@ color: green;
       fluidRow(
         column(width =10, offset = 2,
                box(
-                 title = "ON Demand", width = 10, status = "warning", solidHeader = TRUE,
+                 title = "Demand", width = 10, status = "warning", solidHeader = TRUE,
                  collapsible = TRUE,
-                 fluidRow(column(width = 2, selectInput("select_fr_on4", h4("Select Frequency"), 
+                 fluidRow(column(width = 2, selectInput("select_fr_on4", h4("Frequency"), 
                                                         choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                           column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_on4 != 1",sliderInput("on_dates_4",
                                                                                                                               "Dates",
@@ -699,14 +804,21 @@ color: green;
                    column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
                  )
                )))
-      ),
+      )),
       tabItem(tabName = "NFL",
+              fluidPage(id = "dashboard_page",
+                fluidRow(div(h2(id = "header_title",i18n$t("Newfoundland & Labrador")),
+                             div(id = "lang_btn",
+                                 bsButton("Btn_EN_nfl","English",icon = icon("language"),style = "primary",size = "small",type = "action"),
+                                 bsButton("Btn_FR_nfl","French",icon = icon("language"),style = "primary",size = "small",type = "action")))),
+                fluidRow(h4(textOutput("timer_nfl"))),
+                br(),
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "NFL Load", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Load", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_nfl", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_nfl", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_nfl != 1",sliderInput("nfl_dates_1",
                                                                                                                                       "Dates",
@@ -730,14 +842,21 @@ color: green;
                            column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
                          )
                        )))
-              ),
+              )),
       tabItem(tabName = "QB",
+              fluidPage(id = "dashboard_page",
+                fluidRow(div(h2(id = "header_title",i18n$t("Quebec")),
+                             div(id = "lang_btn",
+                                 bsButton("Btn_EN_qb","English",icon = icon("language"),style = "primary",size = "small",type = "action"),
+                                 bsButton("Btn_FR_qb","French",icon = icon("language"),style = "primary",size = "small",type = "action")))),
+                fluidRow(h4(textOutput("timer_qb"))),
+                br(),
               fluidRow(
                 column(width =10, offset = 2,
                        box(
                          title = "Total Production", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_1", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_1", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_1 != 1",sliderInput("qb_dates_1",
                                                                                                                                        "Dates",
@@ -766,7 +885,7 @@ color: green;
                        box(
                          title = "Fuel Type - I", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_2", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_2", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_2 != 1",sliderInput("qb_dates_2",
                                                                                                                                        "Dates",
@@ -795,7 +914,7 @@ color: green;
                        box(
                          title = "Fuel Type - II", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_3", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_3", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_3 != 1",sliderInput("qb_dates_3",
                                                                                                                                        "Dates",
@@ -824,7 +943,7 @@ color: green;
                        box(
                          title = "Fuel Type - III", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_4", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_4", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_4 != 1",sliderInput("qb_dates_4",
                                                                                                                                        "Dates",
@@ -853,7 +972,7 @@ color: green;
                        box(
                          title = "Electricity Statistics - I", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_5", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_5", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_5 != 1",sliderInput("qb_dates_5",
                                                                                                                                        "Dates",
@@ -882,7 +1001,7 @@ color: green;
                        box(
                          title = "Electricity Statistics - II", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_6", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_6", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_6 != 1",sliderInput("qb_dates_6",
                                                                                                                                        "Dates",
@@ -911,7 +1030,7 @@ color: green;
                        box(
                          title = "Electricity Statistics - III", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_7", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_7", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_7 != 1",sliderInput("qb_dates_7",
                                                                                                                                        "Dates",
@@ -940,7 +1059,7 @@ color: green;
                        box(
                          title = "Electricity Statistics - IV", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_8", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_8", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_8 != 1",sliderInput("qb_dates_8",
                                                                                                                                        "Dates",
@@ -969,7 +1088,7 @@ color: green;
                        box(
                          title = "Electricity Statistics - V", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_9", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_9", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_9 != 1",sliderInput("qb_dates_9",
                                                                                                                                        "Dates",
@@ -998,7 +1117,7 @@ color: green;
                        box(
                          title = "Electricity Statistics - VI", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_10", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_10", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_10 != 1",sliderInput("qb_dates_10",
                                                                                                                                        "Dates",
@@ -1027,7 +1146,7 @@ color: green;
                        box(
                          title = "Electricity Statistics - VII", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_11", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_11", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_11 != 1",sliderInput("qb_dates_11",
                                                                                                                                        "Dates",
@@ -1056,7 +1175,7 @@ color: green;
                        box(
                          title = "Electricity Statistics - VIII", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_qb_12", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_qb_12", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_qb_12 != 1",sliderInput("qb_dates_12",
                                                                                                                                         "Dates",
@@ -1081,14 +1200,21 @@ color: green;
                          )
                        ))),
               
-              ),
+              )),
       tabItem(tabName = "AB",
+              fluidPage(id = "dashboard_page",
+                fluidRow(div(h2(id = "header_title",i18n$t("Alberta")),
+                             div(id = "lang_btn",
+                                 bsButton("Btn_EN_ab","English",icon = icon("language"),style = "primary",size = "small",type = "action"),
+                                 bsButton("Btn_FR_ab","French",icon = icon("language"),style = "primary",size = "small",type = "action")))),
+                fluidRow(h4(textOutput("timer_ab"))),
+                br(),
               fluidRow(
                 column(width =10, offset = 2,
                        box(
                          title = "Hydro", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ab_8", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_8", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_8 != 1",sliderInput("ab_dates_8",
                                                                                                                                        "Dates",
@@ -1096,7 +1222,7 @@ color: green;
                                                                                                                                        max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
                                                                                                                                        value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
                                                                                                                                        timeFormat="%Y-%m-%d"))),
-                                  column(width = 2, selectInput("ab_ind_8_ff", h4("Select Asset"), 
+                                  column(width = 2, selectInput("ab_ind_8_ff", h4("Asset"), 
                                                                 choices = list(
                                                                   "Taylor Hydro (TAY1)" = "Taylor Hydro (TAY1)",
                                                                   "Bow River Hydro (BOW1)" = "Bow River Hydro (BOW1)",
@@ -1130,7 +1256,7 @@ color: green;
                        box(
                          title = "Storage", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ab_9", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_9", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_9 != 1",sliderInput("ab_dates_9",
                                                                                                                                        "Dates",
@@ -1138,7 +1264,7 @@ color: green;
                                                                                                                                        max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
                                                                                                                                        value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
                                                                                                                                        timeFormat="%Y-%m-%d"))),
-                                  column(width = 2, selectInput("ab_ind_9_ff", h4("Select Asset"), 
+                                  column(width = 2, selectInput("ab_ind_9_ff", h4("Asset"), 
                                                                 choices = list(
                                                                   "eReserve1 Rycroft (ERV1)" = "eReserve1 Rycroft (ERV1)",
                                                                   "eReserve2 Buffalo Creek (ERV2)" = "eReserve2 Buffalo Creek (ERV2)",
@@ -1165,7 +1291,7 @@ color: green;
                        box(
                          title = "Solar", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ab_10", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_10", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_10 != 1",sliderInput("ab_dates_10",
                                                                                                                                        "Dates",
@@ -1173,7 +1299,7 @@ color: green;
                                                                                                                                        max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
                                                                                                                                        value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
                                                                                                                                        timeFormat="%Y-%m-%d"))),
-                                  column(width = 2, selectInput("ab_ind_10_ff", h4("Select Asset"), 
+                                  column(width = 2, selectInput("ab_ind_10_ff", h4("Asset"), 
                                                                 choices = list(
                                                                   "Brooks Solar (BSC1)" = "Brooks Solar (BSC1)",
                                                                   "Suffield (SUF1)" = "Suffield (SUF1)",
@@ -1210,7 +1336,7 @@ color: green;
                        box(
                          title = "Wind", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ab_11", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_11", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_11 != 1",sliderInput("ab_dates_11",
                                                                                                                                        "Dates",
@@ -1218,7 +1344,7 @@ color: green;
                                                                                                                                        max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
                                                                                                                                        value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
                                                                                                                                        timeFormat="%Y-%m-%d"))),
-                                  column(width = 2, selectInput("ab_ind_11_ff", h4("Select Asset"), 
+                                  column(width = 2, selectInput("ab_ind_11_ff", h4("Asset"), 
                                                                 choices = list(
                                                                   "Blue Trail Wind (BTR1)*"="Blue Trail Wind (BTR1)*",
                                                                   "Ghost Pine (NEP1)*"="Ghost Pine (NEP1)*",
@@ -1268,7 +1394,7 @@ color: green;
                        box(
                          title = "Biomass", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ab_12", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_12", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_12 != 1",sliderInput("ab_dates_12",
                                                                                                                                        "Dates",
@@ -1276,7 +1402,7 @@ color: green;
                                                                                                                                        max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
                                                                                                                                        value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
                                                                                                                                        timeFormat="%Y-%m-%d"))),
-                                  column(width = 2, selectInput("ab_ind_12_ff", h4("Select Asset"), 
+                                  column(width = 2, selectInput("ab_ind_12_ff", h4("Asset"), 
                                                                 choices = list(
                                                                   "Taylor Hydro (TAY1)" = "Taylor Hydro (TAY1)",
                                                                   "Bow River Hydro (BOW1)" = "Bow River Hydro (BOW1)",
@@ -1309,7 +1435,7 @@ color: green;
                        box(
                          title = "Dual", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ab_13", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_13", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_13 != 1",sliderInput("ab_dates_13",
                                                                                                                                        "Dates",
@@ -1317,7 +1443,7 @@ color: green;
                                                                                                                                        max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
                                                                                                                                        value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
                                                                                                                                        timeFormat="%Y-%m-%d"))),
-                                  column(width = 2, selectInput("ab_ind_13_ff", h4("Select Asset"), 
+                                  column(width = 2, selectInput("ab_ind_13_ff", h4("Asset"), 
                                                                 choices = list(
                                                                   "Taylor Hydro (TAY1)" = "Taylor Hydro (TAY1)",
                                                                   "Bow River Hydro (BOW1)" = "Bow River Hydro (BOW1)",
@@ -1350,7 +1476,7 @@ color: green;
                        box(
                          title = "Coal", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_ab_14", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_ab_14", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_ab_14 != 1",sliderInput("ab_dates_14",
                                                                                                                                        "Dates",
@@ -1358,7 +1484,7 @@ color: green;
                                                                                                                                        max = as.Date(dashboard_ui_slider_date_end,"%Y-%m-%d"),
                                                                                                                                        value=c(as.Date(dashboard_ui_slider_date_start),as.Date(dashboard_ui_slider_date_end)),
                                                                                                                                        timeFormat="%Y-%m-%d"))),
-                                  column(width = 2, selectInput("ab_ind_14_ff", h4("Select Asset"), 
+                                  column(width = 2, selectInput("ab_ind_14_ff", h4("Asset"), 
                                                                 choices = list(
                                                                   "Taylor Hydro (TAY1)" = "Taylor Hydro (TAY1)",
                                                                   "Bow River Hydro (BOW1)" = "Bow River Hydro (BOW1)",
@@ -1391,14 +1517,21 @@ color: green;
               
               
               
-      ),
+      )),
       tabItem(tabName = "BC",
+              fluidPage(id = "dashboard_page",
+                fluidRow(div(h2(id = "header_title",i18n$t("British Columbia")),
+                             div(id = "lang_btn",
+                                 bsButton("Btn_EN_bc","English",icon = icon("language"),style = "primary",size = "small",type = "action"),
+                                 bsButton("Btn_FR_bc","French",icon = icon("language"),style = "primary",size = "small",type = "action")))),
+                fluidRow(h4(textOutput("timer_bc"))),
+                br(),
               fluidRow(
                 column(width =10, offset = 2,
                        box(
-                         title = "BC Balancing_Authority_Load (BAL)", width = 10, status = "warning", solidHeader = TRUE,
+                         title = "Balancing_Authority_Load (BAL)", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_bc_1", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_bc_1", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_bc_1 != 1",sliderInput("bc_dates_1",
                                                                                                                                       "Dates",
@@ -1427,7 +1560,7 @@ color: green;
                        box(
                          title = "BC - US Exchange", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_bc_2", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_bc_2", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_bc_2 != 1",sliderInput("bc_dates_2",
                                                                                                                                       "Dates",
@@ -1456,7 +1589,7 @@ color: green;
                        box(
                          title = "BC - AB Exchange", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE,
-                         fluidRow(column(width = 2, selectInput("select_fr_bc_3", h4("Select Frequency"), 
+                         fluidRow(column(width = 2, selectInput("select_fr_bc_3", h4("Frequency"), 
                                                                 choices = list("Yearly" = 1,"Weekly" = 3, "Daily" = 4, "Hourly" = 5, "15 Min" = 6), selected = 6)),
                                   column(width = 4, offset = 5.3, conditionalPanel(condition = "input.select_fr_bc_3 != 1",sliderInput("bc_dates_3",
                                                                                                                                       "Dates",
@@ -1480,7 +1613,7 @@ color: green;
                            column(width = 2, bsButton("button_pei_ind_1","Download Data", icon = icon("download"), style = "primary", block = TRUE))
                          )
                        )))
-              ),
+              )),
       tabItem(tabName = "DD",
               fluidRow(
                 column(width =10, offset = 2,
@@ -1488,6 +1621,11 @@ color: green;
                          title = "Data Dictionary", width = 10, status = "warning", solidHeader = TRUE,
                          collapsible = TRUE, dataTableOutput("DATA_DICTIONARY_TABLE"))))
               ),
+      tabItem(tabName = "ST",
+              fluidPage(
+                box(title = "Server Status", status = "primary", solidHeader = TRUE, width = "100%", collapsible = FALSE,uiOutput("SERVER_STATUS"))
+              )
+      ),
       tabItem(tabName = "Dwn",
               fluidRow(
                 box(
@@ -1631,7 +1769,7 @@ color: green;
                   
                 ),
                 box(
-                  title = "British Coloumbia",status = "success", solidHeader = TRUE,collapsible = TRUE,
+                  title = "British Columbia",status = "success", solidHeader = TRUE,collapsible = TRUE,
                   column(width = 6,
                          conditionalPanel( condition = "input.radio_bc == 1 || input.radio_bc == 0",dateRangeInput("bc_date_range", h5("Date range_1"))),
                          conditionalPanel( condition = "input.radio_bc == 1 || input.radio_bc == 0",actionButton("bc_filter", "Apply")),
@@ -1737,6 +1875,21 @@ color: green;
 
 #bussines logic
 
+updateTable <- function(url, ref_area, counterpart_area, energy_flows, start_period, end_period){
+  thisUrl <- paste(url, ref_area, sep=".")
+  thisUrl1 <- paste(thisUrl, counterpart_area, sep=".")
+  thisUrl2 <- paste(thisUrl1, energy_flows, sep=".")
+  thisUrlDate <- paste(thisUrl2, "?startPeriod=", start_period, "&endPeriod=", end_period , sep="")
+  dataset <- readSDMX(thisUrlDate)
+  stats<- as.data.frame(dataset)
+  stats <- stats %>% arrange(desc(obsTime))
+  return(stats)
+}
+
+myUrldefault <- "https://fdi-design-sdmx.aaw-dev.cloud.statcan.ca/rest/data/CCEI,DF_HFED,1.0/N"
+
+
+
 
 
 # Define server logic required to draw a histogram
@@ -1765,7 +1918,6 @@ server <- function(input, output, session) {
   
   
   
-  
   Previous_date <- as.Date(Sys.Date())-(5*365)
   previous_time <- paste(Previous_date,"00:00:00",sep=" ")
   
@@ -1773,6 +1925,9 @@ server <- function(input, output, session) {
   previous_time_1 <- paste(Previous_date_1,"00:00:00",sep=" ")
   
   
+  
+  data_sdmx <- updateTable(myUrldefault, "CA_NB", "_Z", "LOAD", "*", "*")
+  print(data_sdmx)
   
   abload_data <- tbl(con, config$provinces$AB$table15) %>% arrange(Date_time_local) %>% collect()
   abload_date <- as.Date(tail(abload_data$Date_time_local,1))
@@ -1824,7 +1979,33 @@ server <- function(input, output, session) {
   
   
   output$timer <- renderText({invalidateLater(1000, session)
-    paste("",Sys.time())})
+    paste("",as.POSIXlt(Sys.time(), tz = "UTC"),"(UTC)")})
+  
+  output$timer_pei <- renderText({invalidateLater(1000, session)
+    paste("",as.POSIXlt(Sys.time(), tz = "UTC"),"(UTC)")})
+  
+  output$timer_bc <- renderText({invalidateLater(1000, session)
+    paste("",as.POSIXlt(Sys.time(), tz = "UTC"),"(UTC)")})
+  
+  output$timer_ab <- renderText({invalidateLater(1000, session)
+    paste("",as.POSIXlt(Sys.time(), tz = "UTC"),"(UTC)")})
+  
+  output$timer_on <- renderText({invalidateLater(1000, session)
+    paste("",as.POSIXlt(Sys.time(), tz = "UTC"),"(UTC)")})
+  
+  output$timer_nb <- renderText({invalidateLater(1000, session)
+    paste("",as.POSIXlt(Sys.time(), tz = "UTC"),"(UTC)")})
+  
+  output$timer_ns <- renderText({invalidateLater(1000, session)
+    paste("",as.POSIXlt(Sys.time(), tz = "UTC"),"(UTC)")})
+  
+  output$timer_nfl <- renderText({invalidateLater(1000, session)
+    paste("",as.POSIXlt(Sys.time(), tz = "UTC"),"(UTC)")})
+  
+  output$timer_qb <- renderText({invalidateLater(1000, session)
+    paste("",as.POSIXlt(Sys.time(), tz = "UTC"),"(UTC)")})
+  
+  
   
   check_db_nb <- function(){tbl(con, config$provinces$NB$table1) %>% count(Date_time_local)}
   get_data_nb <- function(){tbl(con, config$provinces$NB$table1) %>% arrange(Date_time_local) %>% collect()}
@@ -4324,6 +4505,39 @@ server <- function(input, output, session) {
   data_dict_df_nb <- as.data.frame(data_dict_nb)
   output$DATA_DICTIONARY_NB <- renderDataTable({data_dict_df_nb})
   
+  observeEvent(nsload_data_pre(),{
+  #jobs <- jobs_list(workspace = "https://adb-5718177041572308.8.azuredatabricks.net", token = "dapi0eb9c309016768826856d64b9787ce4a")
+  #jb_df <- jobs$response_tidy$job_id
+  #for (jb_id in jb_df)
+  #{
+    
+    #jb_run <- runs_list(job_id = jb_id,workspace = "https://adb-5718177041572308.8.azuredatabricks.net", token = "dapi0eb9c309016768826856d64b9787ce4a")
+    #rn_id <- head(jb_run$response_tidy$runs.run_id,1)
+    #rn_stat <- get_run_status(run_id = rn_id,workspace = "https://adb-5718177041572308.8.azuredatabricks.net", token = "dapi0eb9c309016768826856d64b9787ce4a")
+    #state <- rn_stat$response_list$state$result_state
+    #print(paste(jb_id,state,sep = ":"))
+  #}
+  
+  output$SERVER_STATUS <- renderUI({
+    tags$table(
+      id="server_stat",
+      style = "width:100%",
+      tags$tr(
+        tags$th("Province"),
+        tags$th("Status")
+      ),
+      tags$tr(
+        tags$td("Ontario"),
+        tags$td("Ok")
+      ),
+      tags$tr(
+        tags$td("Prince Edward Island"),
+        tags$td("Ok")
+      )
+    )
+  })
+  })
+  
   
   
   #Individual Province Visualization
@@ -4358,6 +4572,63 @@ server <- function(input, output, session) {
     createAlert(session, "NB_1", content = paste("please select this table:",config$provinces$NB$table1, sep = " "), style = "info", dismiss = TRUE)
     Sys.sleep(0.5)
     updateTabsetPanel(session = session, inputId = "rted_menu", selected = "Dwn") 
+  })
+  
+  
+  observeEvent(input$Btn_EN,{
+    update_lang(session, "en")
+    })
+  observeEvent(input$Btn_EN_pei,{
+    update_lang(session, "en")
+  })
+  observeEvent(input$Btn_EN_ns,{
+    update_lang(session, "en")
+  })
+  observeEvent(input$Btn_EN_nb,{
+    update_lang(session, "en")
+  })
+  observeEvent(input$Btn_EN_nfl,{
+    update_lang(session, "en")
+  })
+  observeEvent(input$Btn_EN_on,{
+    update_lang(session, "en")
+  })
+  observeEvent(input$Btn_EN_ab,{
+    update_lang(session, "en")
+  })
+  observeEvent(input$Btn_EN_bc,{
+    update_lang(session, "en")
+  })
+  observeEvent(input$Btn_EN_qb,{
+    update_lang(session, "en")
+  })
+  
+  observeEvent(input$Btn_FR,{
+    update_lang(session, "fr")
+  })
+  observeEvent(input$Btn_FR_pei,{
+    update_lang(session, "fr")
+  })
+  observeEvent(input$Btn_FR_ns,{
+    update_lang(session, "fr")
+  })
+  observeEvent(input$Btn_FR_nb,{
+    update_lang(session, "fr")
+  })
+  observeEvent(input$Btn_FR_nfl,{
+    update_lang(session, "fr")
+  })
+  observeEvent(input$Btn_FR_on,{
+    update_lang(session, "fr")
+  })
+  observeEvent(input$Btn_FR_ab,{
+    update_lang(session, "fr")
+  })
+  observeEvent(input$Btn_FR_bc,{
+    update_lang(session, "fr")
+  })
+  observeEvent(input$Btn_FR_qb,{
+    update_lang(session, "fr")
   })
   
   # File Download System
